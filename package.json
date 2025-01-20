@@ -1,0 +1,25 @@
+{
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "eslint": "^9.18.0",
+    "eslint-plugin-vue": "^9.32.0",
+    "globals": "^15.14.0",
+    "husky": "^9.1.7",
+    "semantic-release": "^24.2.1",
+    "semantic-release-preconfigured-conventional-commits": "latest",
+    "typescript-eslint": "^8.20.0"
+  },
+  "overrides": {
+    "conventional-changelog-conventionalcommits": ">= 8.0.0"
+  },
+  "scripts": {
+    "prepare": "husky"
+  },
+  "engines": {
+      "node": "22.13.0"
+  },
+  "dependencies": {
+    "@semantic-release/git": "^10.0.1"
+  }
+}

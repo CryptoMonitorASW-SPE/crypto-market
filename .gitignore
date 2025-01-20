@@ -1,0 +1,48 @@
+.gradle
+build
+
+# Node modules
+
+app/src/web/node_modules/
+app/.gradle
+app/build
+app/node_modules/
+node_modules/
+
+# Dependency directories
+/npm-debug.log
+/yarn-debug.log
+/yarn-error.log
+
+# Build output
+/dist/
+/build/
+/*.log
+
+# IDEs and editors
+/.idea/
+/.vscode/
+/*.sublime-workspace
+/*.sublime-project
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# .env files
+.env
+.env.local
+.env.*.local
+:wq
+
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+
+

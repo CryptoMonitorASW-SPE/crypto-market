@@ -1,0 +1,45 @@
+name: Code Quality on PR
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v4
+
+      - name: Setup nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.13'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Execute ESLint
+        id: eslint
+        run: npx eslint app/index.js app/src/* > eslint-report.txt || true
+
+      - name: Load report ESLint
+
+        uses: actions/upload-artifact@v4
+
+        with:
+          name: eslint-report
+          path: eslint-report.txt
+
+      - name: Comment PR with ESLint report
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: eslint-report.txt

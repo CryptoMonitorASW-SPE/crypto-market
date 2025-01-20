@@ -1,0 +1,35 @@
+# Set default behavior to automatically normalize line endings.
+* text=auto
+
+# Treat JavaScript, Vue, and other source files as text files.
+*.js text
+*.ts text
+*.vue text
+*.json text
+*.css text
+*.scss text
+*.html text
+
+# Ignore certain files for merging (e.g., generated files).
+/dist/* merge=union
+/build/* merge=union
+
+# Force specific binary files to always be treated as binary (to avoid conflicts).
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary
+*.mp4 binary
+*.webm binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Set up merge drivers for specific file types.
+*.md merge=union
+
+# Text files should use LF line endings in the repository.
+*.sh text eol=lf
+
