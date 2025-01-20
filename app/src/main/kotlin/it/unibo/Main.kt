@@ -31,9 +31,9 @@ fun main() {
                 )
             }
             install(HttpTimeout) {
-                requestTimeoutMillis = 15000
-                connectTimeoutMillis = 10000
-                socketTimeoutMillis = 15000
+                requestTimeoutMillis = SocketConfiguration.REQUEST_TIMEOUT_MILLIS
+                connectTimeoutMillis = SocketConfiguration.CONNECT_TIMEOUT_MILLIS
+                socketTimeoutMillis = SocketConfiguration.SOCKET_TIMEOUT_MILLIS
             }
         }
 

@@ -66,6 +66,11 @@ tasks.named<Test>("test") {
     useJUnitPlatform()
 }
 
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom("config/detekt/detekt.yaml")
+}
+
 tasks.jar {
     archiveFileName.set("app.jar")
     manifest {

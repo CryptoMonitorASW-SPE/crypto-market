@@ -1,4 +1,4 @@
-// src/main/kotlin/infrastructure/repositories/CoinGeckoRepositoryImpl.kt
+@file:Suppress("ktlint:standard:no-wildcard-imports")
 
 package it.unibo.infrastructure
 
@@ -52,9 +52,13 @@ class CoinGeckoRepositoryImpl(
             // 5xx responses
             logger.error("Server error: ${e.response.status} - ${e.message}")
             null
-        } catch (e: Exception) {
-            // Other errors (e.g., network issues)
-            logger.error("Unexpected error: ${e.localizedMessage}")
+        } catch (e: java.io.IOException) {
+            // Network issues
+            logger.error("Network error: ${e.localizedMessage}")
+            null
+        } catch (e: kotlinx.serialization.SerializationException) {
+            // JSON parsing errors
+            logger.error("Serialization error: ${e.localizedMessage}")
             null
         }
 }

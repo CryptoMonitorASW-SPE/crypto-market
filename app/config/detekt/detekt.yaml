@@ -1,0 +1,8 @@
+style:
+  WildcardImport:
+    active: true
+    excludeImports:
+      - 'java.util.*'
+      - 'io.ktor.*'
+      - 'org.eclipse.rdf4j.*'
+      - 'org.openapitools.client.*'

@@ -10,6 +10,11 @@ class FetchCoinMarketDataService(
     private val repository: CoinGeckoRepository,
     private val logger: Logger,
 ) {
+    companion object {
+        private const val DELAY_MINUTES = 5
+        private const val MILLISECONDS_IN_A_MINUTE = (60 * 1000).toLong()
+    }
+
     suspend fun fetchAndProcessData() {
         val startTime = System.currentTimeMillis()
         val data: List<CoinMarket>? = repository.fetchCoinMarkets()
@@ -22,7 +27,7 @@ class FetchCoinMarketDataService(
 
         // Calculate delay to run every 5 minutes
         val elapsedTime = System.currentTimeMillis() - startTime
-        val delayTime = 5 * 60 * 1000 - elapsedTime
+        val delayTime = DELAY_MINUTES * MILLISECONDS_IN_A_MINUTE - elapsedTime
         if (delayTime > 0) {
             delay(delayTime)
         }
