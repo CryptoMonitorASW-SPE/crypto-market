@@ -8,7 +8,7 @@ detekt = "1.23.7"
 ktor = "2.3.0"
 logback = "1.5.16"
 coroutines = "1.10.1"
-serialization = "1.5.1"
+serialization = "1.8.0"
 
 [libraries]
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
