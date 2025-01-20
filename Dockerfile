@@ -1,38 +1,22 @@
-# ================================================
-# Stage 1: Build the application
-# ================================================
-FROM node:22.13-alpine AS build
+FROM gradle:8.11-jdk21 AS build
 
-# Set working directory
-WORKDIR /usr/src/app
+COPY app/build.gradle.kts settings.gradle.kts gradle.properties ./
+RUN mkdir -p gradle
+COPY gradle/libs.versions.toml gradle/
+COPY app/src src
 
-# Copy package files from the app folder
-COPY app/package*.json ./
-# (Optional) If you run gradle tasks inside Docker, you could copy build.gradle.kts too
-# COPY app/build.gradle.kts ./
+RUN ls -la
 
-# Install dependencies
-RUN npm install
+RUN --mount=type=cache,target=/home/gradle/.gradle/caches gradle jar --no-daemon --parallel --build-cache
 
-# Copy the rest of the application code
-COPY app/ ./
+FROM openjdk:21-jdk-slim
 
-# (Optional) If you had a build step for a front-end, you might do: 
-# RUN npm run build
+RUN apt-get update && apt-get install -y curl
 
-# ================================================
-# Stage 2: Create the final image
-# ================================================
-FROM node:22.13-alpine AS build-final
+WORKDIR /app
 
-# Set working directory
-WORKDIR /usr/src/app
+COPY --from=build /home/gradle/build/libs/app.jar app.jar
 
-# Copy files from the build stage
-COPY --from=build /usr/src/app /usr/src/app
+EXPOSE 8080
 
-# Expose the backend port
-EXPOSE 3000
-
-# Start the application
-CMD ["node", "index.js"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -4,7 +4,7 @@ plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning") version "3.1.7"
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     alias(libs.plugins.kotlin.jvm)
-
+    kotlin("plugin.serialization") version "1.8.0"
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
     // Apply the application plugin to add support for building a CLI application in Java.
@@ -39,6 +39,14 @@ dependencies {
     testImplementation(libs.junit.jupiter.engine)
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.logback.classic)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -50,10 +58,31 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "it.unibo.AppKt"
+    mainClass = "it.unibo.MainKt"
 }
 
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+tasks.jar {
+    archiveFileName.set("app.jar")
+    manifest {
+        attributes["Main-Class"] = application.mainClass.get() // or specify your main class directly
+    }
+
+    // Include all runtime dependencies into the JAR file
+    from(
+        configurations.runtimeClasspath
+            .get()
+            .filter { it.name.endsWith("jar") }
+            .map { zipTree(it) },
+    )
+
+    // Optionally, include your compiled classes (if not already included by default)
+    from(sourceSets.main.get().output)
+
+    // Ensure the JAR is built as a single fat JAR
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

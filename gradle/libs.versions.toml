@@ -5,8 +5,19 @@
 junit-jupiter-engine = "5.11.4"
 ktlint = "12.1.2"
 detekt = "1.23.7"
+ktor = "2.3.0"
+logback = "1.4.11"
+coroutines = "1.7.1"
+serialization = "1.5.1"
 
 [libraries]
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter-engine" }
 
 [plugins]
