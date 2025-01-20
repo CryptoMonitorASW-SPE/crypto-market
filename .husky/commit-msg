@@ -1,1 +1,4 @@
+set -e
+./gradlew ktlintCheck
+set +e
 npx --no-install commitlint --edit $1
