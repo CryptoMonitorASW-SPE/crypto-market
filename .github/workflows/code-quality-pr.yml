@@ -34,18 +34,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Print working directory
-        run: pwd
 
       - name: Run Detekt
         id: detekt
         run: ./gradlew detekt || true
 
-      - name: Upload Detekt report
-        uses: actions/upload-artifact@v4
-        with:
-          name: detekt-report
-          path: app/build/reports/detekt/detekt.md
+      - name: Check if Detekt report is empty
+        id: check_detekt_report
+        run: |
+          if [ -s app/build/reports/detekt/detekt.md ]; then
+            echo "Detekt report is not empty"
+            exit 0
+          else
+            echo "Detekt report is empty"
+            exit 1
+          fi
 
       - name: Comment PR with Detekt report
         uses: marocchino/sticky-pull-request-comment@v2
