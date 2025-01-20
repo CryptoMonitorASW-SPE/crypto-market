@@ -51,4 +51,4 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          path: build/reports/detekt/detekt.md
+          path: app/build/reports/detekt/detekt.md
