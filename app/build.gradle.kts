@@ -4,7 +4,7 @@ plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning") version "3.1.7"
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     alias(libs.plugins.kotlin.jvm)
-    kotlin("plugin.serialization") version "1.8.0"
+    kotlin("plugin.serialization") version "2.1.0"
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
     // Apply the application plugin to add support for building a CLI application in Java.
