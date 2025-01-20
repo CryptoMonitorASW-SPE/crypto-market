@@ -1,12 +1,12 @@
 import io.github.andreabrighi.gradle.gitsemver.conventionalcommit.ConventionalCommit
-import com.github.gradle.node.npm.task.NpmTask
-import com.github.gradle.node.task.NodeTask
-
 
 plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning") version "3.1.7"
-    // Apply the Node.js plugin
-    id("com.github.node-gradle.node") version "7.1.0"
+    // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
+    alias(libs.plugins.kotlin.jvm)
+
+    // Apply the application plugin to add support for building a CLI application in Java.
+    application
 }
 
 buildscript {
@@ -24,31 +24,37 @@ gitSemVer {
     commitNameBasedUpdateStrategy(ConventionalCommit::semanticVersionUpdate)
 }
 
-node {
-    version.set("22.13.0")
-
-    // Download a local Node.js distribution (instead of using a global one)
-    download.set(true)
-
-    // If you have a specific version of npm to use, uncomment and set it:
-    // npmVersion.set("9.6.6")
-
-    // This is the directory where the plugin will look for package.json
-    nodeProjectDir.set(file(project.projectDir))
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
 }
 
-tasks.register<NpmTask>("runBackend") {
-    dependsOn("npm_install")
-    args.set(listOf("run", "dev"))
+dependencies {
+    // Use the Kotlin JUnit 5 integration.
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+
+    // Use the JUnit 5 integration.
+    testImplementation(libs.junit.jupiter.engine)
+
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // This dependency is used by the application.
+    implementation(libs.guava)
 }
 
-tasks.register<NpmTask>("runFrontend") {
-    dependsOn("npm_install")
-    args.set(listOf("run", "serve"))
-}
-
-tasks.register("printVersion") {
-    doLast {
-        println("Project version: ${project.version}")
+// Apply a specific Java toolchain to ease working on different environments.
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
     }
+}
+
+application {
+    // Define the main class for the application.
+    mainClass = "it.unibo.AppKt"
+}
+
+tasks.named<Test>("test") {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
 }
