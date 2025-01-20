@@ -34,6 +34,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Print working directory
+        run: pwd
+
       - name: Run Detekt
         id: detekt
         run: ./gradlew detekt || true
