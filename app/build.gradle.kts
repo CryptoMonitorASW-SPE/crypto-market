@@ -71,6 +71,13 @@ detekt {
     config.setFrom("config/detekt/detekt.yaml")
 }
 
+tasks.register("printVersion") {
+    val version = project.version
+    doLast {
+        println("Project version: $version")
+    }
+}
+
 tasks.jar {
     archiveFileName.set("app.jar")
     manifest {
