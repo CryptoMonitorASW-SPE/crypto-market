@@ -11,6 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.launch
+import kotlinx.io.IOException
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
@@ -56,8 +58,10 @@ class EventDispatcherAdapter(
                         setBody(jsonData)
                     }
                     logger.info("Published data: $jsonData, Response: ${response.status}")
-                } catch (e: Exception) {
-                    logger.error("Failed to publish data", e)
+                } catch (e: IOException) {
+                    logger.error("Failed to publish data due to network error", e)
+                } catch (e: SerializationException) {
+                    logger.error("Failed to publish data due to serialization error", e)
                 }
             }
         }
