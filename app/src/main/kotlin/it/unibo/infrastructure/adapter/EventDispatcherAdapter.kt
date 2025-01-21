@@ -7,6 +7,7 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.util.network.UnresolvedAddressException
 import it.unibo.domain.Crypto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +50,8 @@ class EventDispatcherAdapter(
                     logger.error("Failed to publish data due to network error", e)
                 } catch (e: SerializationException) {
                     logger.error("Failed to publish data due to serialization error", e)
+                } catch (uae: UnresolvedAddressException) {
+                    logger.error("Failed to publish data due to address", uae)
                 }
             }
         }
