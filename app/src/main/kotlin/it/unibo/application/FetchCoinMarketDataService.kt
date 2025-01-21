@@ -2,6 +2,7 @@ package it.unibo.application
 
 import it.unibo.domain.CoinGeckoRepository
 import it.unibo.domain.CoinMarket
+import it.unibo.infrastructure.adapter.EventDispatcherAdapter
 import kotlinx.coroutines.delay
 import org.slf4j.Logger
 import java.time.LocalDateTime
@@ -9,6 +10,7 @@ import java.time.LocalDateTime
 class FetchCoinMarketDataService(
     private val repository: CoinGeckoRepository,
     private val logger: Logger,
+    private val eventDispatcher: EventDispatcherAdapter
 ) {
     companion object {
         private const val DELAY_MINUTES = 5
@@ -21,6 +23,11 @@ class FetchCoinMarketDataService(
         if (data != null) {
             // Log successful retrieval
             logger.info("Retrieved $data coins at ${LocalDateTime.now()}")
+
+            data.forEach{
+                eventDispatcher.publish(it)
+            }
+
         } else {
             logger.warn("Failed to retrieve data at ${LocalDateTime.now()}")
         }

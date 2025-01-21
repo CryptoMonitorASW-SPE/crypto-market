@@ -9,6 +9,7 @@ import it.unibo.application.ApiMetricsLoggingService
 import it.unibo.application.FetchCoinMarketDataService
 import it.unibo.domain.CoinGeckoRepository
 import it.unibo.infrastructure.CoinGeckoRepositoryImpl
+import it.unibo.infrastructure.adapter.EventDispatcherAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,27 +23,29 @@ fun main() {
     val logger = LoggerFactory.getLogger("CoinGeckoApp")
 
     // Configure Ktor client
-    val client =
-        HttpClient(CIO) {
-            install(ContentNegotiation) {
-                json(
-                    Json {
-                        ignoreUnknownKeys = true // Ignore fields we don't map
-                    },
-                )
-            }
-            install(HttpTimeout) {
-                requestTimeoutMillis = SocketConfiguration.REQUEST_TIMEOUT_MILLIS
-                connectTimeoutMillis = SocketConfiguration.CONNECT_TIMEOUT_MILLIS
-                socketTimeoutMillis = SocketConfiguration.SOCKET_TIMEOUT_MILLIS
-            }
+    val client = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json(
+                Json {
+                    ignoreUnknownKeys = true // Ignore fields we don't map
+                },
+            )
         }
+        install(HttpTimeout) {
+            requestTimeoutMillis = SocketConfiguration.REQUEST_TIMEOUT_MILLIS
+            connectTimeoutMillis = SocketConfiguration.CONNECT_TIMEOUT_MILLIS
+            socketTimeoutMillis = SocketConfiguration.SOCKET_TIMEOUT_MILLIS
+        }
+    }
 
     // Initialize the repository
     val repository: CoinGeckoRepository = CoinGeckoRepositoryImpl(client, logger)
 
+    // Initialize the EventDispatcherAdapter
+    val eventDispatcher = EventDispatcherAdapter()
+
     // Initialize the service
-    val fetchService = FetchCoinMarketDataService(repository, logger)
+    val fetchService = FetchCoinMarketDataService(repository, logger, eventDispatcher)
 
     // Create a SupervisorJob for structured concurrency
     val supervisor = SupervisorJob()
