@@ -8,6 +8,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import it.unibo.domain.CoinGeckoRepository
 import it.unibo.domain.CoinMarket
+import it.unibo.infrastructure.metrics.ApiCallTracker
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import java.time.LocalDateTime
@@ -26,8 +27,9 @@ class CoinGeckoRepositoryImpl(
     private val ids = "bitcoin,ethereum,ripple,polkadot,solana,litecoin,cardano,doge"
     private val json = Json { ignoreUnknownKeys = true }
 
-    override suspend fun fetchCoinMarkets(): List<CoinMarket>? =
-        try {
+    override suspend fun fetchCoinMarkets(): List<CoinMarket>? {
+        ApiCallTracker.recordApiCall() // Record the API call
+        return try {
             val response: HttpResponse =
                 client.get(url) {
                     parameter("vs_currency", vsCurrency)
@@ -61,4 +63,5 @@ class CoinGeckoRepositoryImpl(
             logger.error("Serialization error: ${e.localizedMessage}")
             null
         }
+    }
 }

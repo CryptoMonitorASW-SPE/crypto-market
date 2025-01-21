@@ -5,6 +5,7 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
+import it.unibo.application.ApiMetricsLoggingService
 import it.unibo.application.FetchCoinMarketDataService
 import it.unibo.domain.CoinGeckoRepository
 import it.unibo.infrastructure.CoinGeckoRepositoryImpl
@@ -53,6 +54,11 @@ fun main() {
         while (isActive) {
             fetchService.fetchAndProcessData()
         }
+    }
+
+    scope.launch {
+        val metricsService = ApiMetricsLoggingService(logger)
+        metricsService.startLogging()
     }
 
     // Handle graceful shutdown
