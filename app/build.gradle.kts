@@ -47,7 +47,7 @@ dependencies {
     implementation(libs.logback.classic)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
-    implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.5.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
