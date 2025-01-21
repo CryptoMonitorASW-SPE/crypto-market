@@ -1,5 +1,7 @@
 package it.unibo.infrastructure.metrics
 
+import it.unibo.application.ApiMetricsLoggingService
+import it.unibo.application.ApiMetricsLoggingService.Companion.LOGGING_INTERVAL_MILLIS
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.Instant
@@ -9,7 +11,6 @@ object ApiCallTracker {
     private val totalCalls = AtomicLong(0)
     private val callsInCurrentInterval = AtomicLong(0)
     private val mutex = Mutex()
-    private val intervalDurationMillis = 60 * 1000L // 1 minute
     private var windowStart = Instant.now().toEpochMilli()
 
     /**
@@ -26,7 +27,7 @@ object ApiCallTracker {
     suspend fun getAndResetCallsInInterval(): Long =
         mutex.withLock {
             val now = Instant.now().toEpochMilli()
-            if (now - windowStart >= intervalDurationMillis) {
+            if (now - windowStart >= LOGGING_INTERVAL_MILLIS) {
                 val calls = callsInCurrentInterval.getAndSet(0)
                 windowStart = now
                 calls
