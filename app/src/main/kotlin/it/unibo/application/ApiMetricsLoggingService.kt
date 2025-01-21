@@ -7,11 +7,10 @@ import org.slf4j.Logger
 import java.time.LocalDateTime
 
 class ApiMetricsLoggingService(
-    private val logger: Logger
+    private val logger: Logger,
 ) {
-
     companion object {
-        const val LOGGING_INTERVAL_MILLIS = 60 * 1000L //One Minute
+        const val LOGGING_INTERVAL_MILLIS = 60 * 1000L // One Minute
         const val LOGGING_INTERVAL_SECONDS = LOGGING_INTERVAL_MILLIS / 1000
     }
 
@@ -26,7 +25,7 @@ class ApiMetricsLoggingService(
             if (callsInInterval > 0) {
                 logger.info(
                     "API Calls - Total: $totalCalls, Last $LOGGING_INTERVAL_SECONDS " +
-                            "seconds: $callsInInterval at ${LocalDateTime.now()}",
+                        "seconds: $callsInInterval at ${LocalDateTime.now()}",
                 )
             }
         }

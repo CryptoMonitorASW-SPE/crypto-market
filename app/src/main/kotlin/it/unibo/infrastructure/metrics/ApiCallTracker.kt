@@ -1,6 +1,5 @@
 package it.unibo.infrastructure.metrics
 
-import it.unibo.application.ApiMetricsLoggingService
 import it.unibo.application.ApiMetricsLoggingService.Companion.LOGGING_INTERVAL_MILLIS
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

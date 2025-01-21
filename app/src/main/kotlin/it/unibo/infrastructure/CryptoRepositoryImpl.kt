@@ -6,8 +6,9 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import it.unibo.domain.CoinGeckoRepository
-import it.unibo.domain.CoinMarket
+import it.unibo.domain.CryptoRepository
+import it.unibo.domain.CryptoSerializable
+import it.unibo.domain.Currency
 import it.unibo.infrastructure.metrics.ApiCallTracker
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
@@ -15,35 +16,33 @@ import java.time.LocalDateTime
 
 object Config {
     // Retrieve the API key from environment variables
-    val API_KEY: String by lazy { System.getenv("COINGECKO_API_KEY") ?: "SECRETSECRET" }
+    val API_KEY: String by lazy { System.getenv("COINGECKO_API_KEY") ?: "SECRET" }
 }
 
-class CoinGeckoRepositoryImpl(
+class CryptoRepositoryImpl(
     private val client: HttpClient,
     private val logger: Logger,
-) : CoinGeckoRepository {
+) : CryptoRepository {
     private val url = "https://api.coingecko.com/api/v3/coins/markets"
-    private val vsCurrency = "usd"
     private val ids = "bitcoin,ethereum,ripple,polkadot,solana,litecoin,cardano,doge"
     private val json = Json { ignoreUnknownKeys = true }
 
-    override suspend fun fetchCoinMarkets(): List<CoinMarket>? {
+    override suspend fun fetchCoinMarkets(currency: Currency): List<CryptoSerializable>? {
         ApiCallTracker.recordApiCall() // Record the API call
         return try {
             val response: HttpResponse =
                 client.get(url) {
-                    parameter("vs_currency", vsCurrency)
+                    parameter("vs_currency", currency.code)
                     parameter("ids", ids)
                     header("accept", "application/json")
                     header("x-cg-demo-api-key", Config.API_KEY)
                 }
             if (response.status == HttpStatusCode.OK) {
                 val responseBody: String = response.bodyAsText()
-                val coinMarkets: List<CoinMarket> = json.decodeFromString(responseBody)
-                logger.info("Successfully fetched and parsed data at ${LocalDateTime.now()}")
-                coinMarkets
+                val cryptos: List<CryptoSerializable> = json.decodeFromString(responseBody)
+                cryptos
             } else {
-                logger.error("Failed to fetch data: ${response.status}")
+                logger.warn("API request failed with status ${response.status} at ${LocalDateTime.now()}")
                 null
             }
         } catch (e: io.ktor.client.plugins.ClientRequestException) {

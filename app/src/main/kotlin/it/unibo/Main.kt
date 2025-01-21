@@ -7,13 +7,14 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import it.unibo.application.ApiMetricsLoggingService
 import it.unibo.application.FetchCoinMarketDataService
-import it.unibo.domain.CoinGeckoRepository
-import it.unibo.infrastructure.CoinGeckoRepositoryImpl
+import it.unibo.domain.CryptoRepository
+import it.unibo.infrastructure.CryptoRepositoryImpl
 import it.unibo.infrastructure.adapter.EventDispatcherAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -23,23 +24,24 @@ fun main() {
     val logger = LoggerFactory.getLogger("CoinGeckoApp")
 
     // Configure Ktor client
-    val client = HttpClient(CIO) {
-        install(ContentNegotiation) {
-            json(
-                Json {
-                    ignoreUnknownKeys = true // Ignore fields we don't map
-                },
-            )
+    val client =
+        HttpClient(CIO) {
+            install(ContentNegotiation) {
+                json(
+                    Json {
+                        ignoreUnknownKeys = true // Ignore fields we don't map
+                    },
+                )
+            }
+            install(HttpTimeout) {
+                requestTimeoutMillis = SocketConfiguration.REQUEST_TIMEOUT_MILLIS
+                connectTimeoutMillis = SocketConfiguration.CONNECT_TIMEOUT_MILLIS
+                socketTimeoutMillis = SocketConfiguration.SOCKET_TIMEOUT_MILLIS
+            }
         }
-        install(HttpTimeout) {
-            requestTimeoutMillis = SocketConfiguration.REQUEST_TIMEOUT_MILLIS
-            connectTimeoutMillis = SocketConfiguration.CONNECT_TIMEOUT_MILLIS
-            socketTimeoutMillis = SocketConfiguration.SOCKET_TIMEOUT_MILLIS
-        }
-    }
 
     // Initialize the repository
-    val repository: CoinGeckoRepository = CoinGeckoRepositoryImpl(client, logger)
+    val repository: CryptoRepository = CryptoRepositoryImpl(client, logger)
 
     // Initialize the EventDispatcherAdapter
     val eventDispatcher = EventDispatcherAdapter()
@@ -56,6 +58,7 @@ fun main() {
     scope.launch {
         while (isActive) {
             fetchService.fetchAndProcessData()
+            delay(FetchCoinMarketDataService.DELAY_MINUTES * FetchCoinMarketDataService.MILLISECONDS_IN_A_MINUTE)
         }
     }
 
