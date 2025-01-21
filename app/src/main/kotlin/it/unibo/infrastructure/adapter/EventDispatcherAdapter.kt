@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package it.unibo.infrastructure.adapter
 
 import io.ktor.client.HttpClient
@@ -13,6 +15,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
 class EventDispatcherAdapter(
@@ -24,28 +27,12 @@ class EventDispatcherAdapter(
     private val client = HttpClient(CIO)
     private val mutex = Mutex()
 
-    fun publish(data: Crypto) {
+    fun publish(data: List<Crypto>) {
         scope.launch {
             mutex.withLock {
                 try {
-                    val eventType = "PRICE_UPDATED"
-                    val cryptoId = "bitcoin"
-                    val newPrice = 45
-                    val timestamp = 1633024800
-
-                    val event =
-                        """
-                        {
-                            "eventType": "$eventType",
-                            "payload": {
-                                "cryptoId": "$cryptoId",
-                                "newPrice": $newPrice
-                            },
-                            "timestamp": $timestamp
-                        }
-                        """.trimIndent()
-                    val jsonData = event
-                    // val jsonData = Json.encodeToString(data)
+                    val jsonData = Json.encodeToString(data)
+                    logger.info("Publishing data: $jsonData")
                     val response: HttpResponse =
                         client.post {
                             url {
@@ -57,7 +44,7 @@ class EventDispatcherAdapter(
                             contentType(ContentType.Application.Json)
                             setBody(jsonData)
                         }
-                    logger.info("Published data: $jsonData, Response: ${response.status}")
+                    logger.info("Response: ${response.status}")
                 } catch (e: IOException) {
                     logger.error("Failed to publish data due to network error", e)
                 } catch (e: SerializationException) {

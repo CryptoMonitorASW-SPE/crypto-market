@@ -1,5 +1,8 @@
 package it.unibo.domain
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Crypto(
     val id: String,
     val symbol: String,

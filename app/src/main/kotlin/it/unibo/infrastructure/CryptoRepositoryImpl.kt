@@ -16,12 +16,14 @@ import org.slf4j.Logger
 import java.time.LocalDateTime
 
 object Config {
-    private val dotenv: Dotenv = Dotenv.configure()
-        .directory("../../")
-        .load()
+    private val dotenv: Dotenv =
+        Dotenv
+            .configure()
+            .directory("../../")
+            .load()
+
     // Retrieve the API key from environment variables
     val API_KEY: String by lazy { System.getenv("COINGECKO_API_KEY") ?: dotenv["COINGECKO_API_KEY"] }
-
 }
 
 class CryptoRepositoryImpl(
