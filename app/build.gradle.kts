@@ -47,8 +47,7 @@ dependencies {
     implementation(libs.logback.classic)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
-    testImplementation("io.ktor:ktor-client-mock:2.3.1")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

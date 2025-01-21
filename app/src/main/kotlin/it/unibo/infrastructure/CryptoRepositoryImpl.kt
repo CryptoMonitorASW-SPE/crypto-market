@@ -2,6 +2,7 @@
 
 package it.unibo.infrastructure
 
+import io.github.cdimascio.dotenv.Dotenv
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -15,8 +16,12 @@ import org.slf4j.Logger
 import java.time.LocalDateTime
 
 object Config {
+    private val dotenv: Dotenv = Dotenv.configure()
+        .directory("../../")
+        .load()
     // Retrieve the API key from environment variables
-    val API_KEY: String by lazy { System.getenv("COINGECKO_API_KEY") ?: "SECRET" }
+    val API_KEY: String by lazy { System.getenv("COINGECKO_API_KEY") ?: dotenv["COINGECKO_API_KEY"] }
+
 }
 
 class CryptoRepositoryImpl(
