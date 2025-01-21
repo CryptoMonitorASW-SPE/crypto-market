@@ -54,7 +54,7 @@ data class CryptoSerializable(
     @SerialName("price_change_percentage_24h")
     val priceChangePercentage24h: Double? = null,
     @SerialName("market_cap_change_24h")
-    val marketCapChange24h: Double? = null, // Changed from Long? to Double?
+    val marketCapChange24h: Double? = null,
     @SerialName("market_cap_change_percentage_24h")
     val marketCapChangePercentage24h: Double? = null,
     @SerialName("circulating_supply")
