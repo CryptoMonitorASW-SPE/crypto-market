@@ -15,9 +15,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.io.IOException
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
+
+@Serializable
+data class EventPayload(val eventType: String, val payload: List<Crypto>)
 
 class EventDispatcherAdapter(
     private val httpServerHost: String = "event-dispatcher",
@@ -32,7 +36,8 @@ class EventDispatcherAdapter(
         scope.launch {
             mutex.withLock {
                 try {
-                    val jsonData = Json.encodeToString(data)
+                    val eventPayload = EventPayload(eventType = "CRYPTO_UPDATE", payload = data)
+                    val jsonData = Json.encodeToString(eventPayload)
                     logger.info("Publishing data: $jsonData")
                     val response: HttpResponse =
                         client.post {
