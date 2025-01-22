@@ -3,6 +3,7 @@
 package it.unibo.infrastructure
 
 import io.github.cdimascio.dotenv.Dotenv
+import io.github.cdimascio.dotenv.DotenvException
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -19,7 +20,7 @@ object Config {
     private val dotenv: Dotenv? =
         try {
             Dotenv.configure().directory("../../").load()
-        } catch (e: Exception) {
+        } catch (e: DotenvException) {
             null
         }
 
