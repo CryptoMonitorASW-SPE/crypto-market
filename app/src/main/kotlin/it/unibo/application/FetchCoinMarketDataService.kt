@@ -69,7 +69,11 @@ class FetchCoinMarketDataService(
                 existing.copy(
                     prices = updateField(existing.prices, crypto.currentPrice),
                     marketCap = updateField(existing.marketCap, crypto.marketCap?.toDouble()),
-                    fullyDilutedValuation = updateField(existing.fullyDilutedValuation, crypto.fullyDilutedValuation?.toDouble()),
+                    fullyDilutedValuation =
+                        updateField(
+                            existing.fullyDilutedValuation,
+                            crypto.fullyDilutedValuation?.toDouble(),
+                        ),
                     totalVolume = updateField(existing.totalVolume, crypto.totalVolume?.toDouble()),
                     high24h = updateField(existing.high24h, crypto.high24h),
                     low24h = updateField(existing.low24h, crypto.low24h),
