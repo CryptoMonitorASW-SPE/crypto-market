@@ -33,7 +33,10 @@ class CryptoRepositoryImpl(
     private val logger: Logger,
 ) : CryptoRepository {
     private val url = "https://api.coingecko.com/api/v3/coins/markets"
-    private val ids = "bitcoin,ethereum,ripple,polkadot,solana,litecoin,cardano,doge"
+
+//  private val ids = "bitcoin,ethereum,ripple,polkadot,solana,litecoin,cardano,doge"
+    private val ids = "bitcoin,ethereum"
+
     private val json = Json { ignoreUnknownKeys = true }
 
     override suspend fun fetchCoinMarkets(currency: Currency): List<CryptoSerializable>? {

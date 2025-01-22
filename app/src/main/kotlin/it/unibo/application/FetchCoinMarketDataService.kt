@@ -33,7 +33,6 @@ class FetchCoinMarketDataService(
             "Combined data for ${combinedCryptos.size} cryptos at ${LocalDateTime.now()} in" +
                 " ${System.currentTimeMillis() - startTime} ms",
         )
-        logger.info("$combinedCryptos")
         eventDispatcher.publish(combinedCryptos)
     }
 
