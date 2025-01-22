@@ -4,31 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Currency(
-    val code: String,
-) {
-    @Serializable
-    @SerialName("usd")
-    data object USD : Currency("usd")
-
-    @Serializable
-    @SerialName("eur")
-    data object EUR : Currency("eur")
-
-    companion object {
-        fun getAllCurrencies(): List<Currency> = listOf(USD, EUR)
-    }
-}
-
-@Serializable
-data class Price(
-    @SerialName("usd")
-    val usd: Double? = null,
-    @SerialName("eur")
-    val eur: Double? = null,
-)
-
-@Serializable
 data class CryptoSerializable(
     val id: String,
     @SerialName("symbol")
@@ -36,7 +11,7 @@ data class CryptoSerializable(
     val name: String,
     val image: String? = null,
     @SerialName("current_price")
-    val currentPrice: Double? = null,
+    val currentPrice: Double,
     @SerialName("market_cap")
     val marketCap: Long? = null,
     @SerialName("market_cap_rank")

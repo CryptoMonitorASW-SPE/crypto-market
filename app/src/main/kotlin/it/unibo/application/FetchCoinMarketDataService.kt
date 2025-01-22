@@ -4,7 +4,7 @@ import it.unibo.domain.Crypto
 import it.unibo.domain.CryptoRepository
 import it.unibo.domain.CryptoSerializable
 import it.unibo.domain.Currency
-import it.unibo.domain.Price
+import it.unibo.domain.CurrencyValue
 import it.unibo.infrastructure.adapter.EventDispatcherAdapter
 import org.slf4j.Logger
 import java.time.LocalDateTime
@@ -59,42 +59,58 @@ class FetchCoinMarketDataService(
     ) {
         val existing = cryptoMap[crypto.id]
         if (existing != null) {
-            val updatedPrice =
-                existing.prices.copy(
-                    usd = if (currency is Currency.USD) crypto.currentPrice else existing.prices.usd,
-                    eur = if (currency is Currency.EUR) crypto.currentPrice else existing.prices.eur,
+            // Helper to update nullable CurrencyValue fields
+            fun updateField(
+                current: CurrencyValue?,
+                newValue: Double?,
+            ) = current?.copy(values = current.values + (currency to newValue))
+
+            cryptoMap[crypto.id] =
+                existing.copy(
+                    prices = updateField(existing.prices, crypto.currentPrice),
+                    marketCap = updateField(existing.marketCap, crypto.marketCap?.toDouble()),
+                    fullyDilutedValuation = updateField(existing.fullyDilutedValuation, crypto.fullyDilutedValuation?.toDouble()),
+                    totalVolume = updateField(existing.totalVolume, crypto.totalVolume?.toDouble()),
+                    high24h = updateField(existing.high24h, crypto.high24h),
+                    low24h = updateField(existing.low24h, crypto.low24h),
+                    priceChange24h = updateField(existing.priceChange24h, crypto.priceChange24h),
+                    marketCapChange24h = updateField(existing.marketCapChange24h, crypto.marketCapChange24h),
+                    ath = updateField(existing.ath, crypto.ath),
+                    atl = updateField(existing.atl, crypto.atl),
                 )
-            cryptoMap[crypto.id] = existing.copy(prices = updatedPrice)
         } else {
-            val price =
-                when (currency) {
-                    is Currency.USD -> Price(usd = crypto.currentPrice, eur = null)
-                    is Currency.EUR -> Price(usd = null, eur = crypto.currentPrice)
-                }
+            // Helper to create new CurrencyValue with current currency's value
+            fun createValue(value: Double?) =
+                CurrencyValue(
+                    Currency.getAllCurrencies().associateWith { curr ->
+                        if (curr == currency) value else null
+                    },
+                )
+
             cryptoMap[crypto.id] =
                 Crypto(
                     id = crypto.id,
                     symbol = crypto.symbol,
                     name = crypto.name,
                     image = crypto.image,
-                    prices = price,
-                    marketCap = crypto.marketCap,
+                    prices = createValue(crypto.currentPrice),
+                    marketCap = createValue(crypto.marketCap?.toDouble()),
                     marketCapRank = crypto.marketCapRank,
-                    fullyDilutedValuation = crypto.fullyDilutedValuation,
-                    totalVolume = crypto.totalVolume,
-                    high24h = crypto.high24h,
-                    low24h = crypto.low24h,
-                    priceChange24h = crypto.priceChange24h,
+                    fullyDilutedValuation = createValue(crypto.fullyDilutedValuation?.toDouble()),
+                    totalVolume = createValue(crypto.totalVolume?.toDouble()),
+                    high24h = createValue(crypto.high24h),
+                    low24h = createValue(crypto.low24h),
+                    priceChange24h = createValue(crypto.priceChange24h),
                     priceChangePercentage24h = crypto.priceChangePercentage24h,
-                    marketCapChange24h = crypto.marketCapChange24h,
+                    marketCapChange24h = createValue(crypto.marketCapChange24h),
                     marketCapChangePercentage24h = crypto.marketCapChangePercentage24h,
                     circulatingSupply = crypto.circulatingSupply,
                     totalSupply = crypto.totalSupply,
                     maxSupply = crypto.maxSupply,
-                    ath = crypto.ath,
+                    ath = createValue(crypto.ath),
                     athChangePercentage = crypto.athChangePercentage,
                     athDate = crypto.athDate,
-                    atl = crypto.atl,
+                    atl = createValue(crypto.atl),
                     atlChangePercentage = crypto.atlChangePercentage,
                     atlDate = crypto.atlDate,
                     lastUpdated = crypto.lastUpdated,
