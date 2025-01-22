@@ -16,14 +16,15 @@ import org.slf4j.Logger
 import java.time.LocalDateTime
 
 object Config {
-    private val dotenv: Dotenv =
-        Dotenv
-            .configure()
-            .directory("../../")
-            .load()
+    private val dotenv: Dotenv? =
+        try {
+            Dotenv.configure().directory("../../").load()
+        } catch (e: Exception) {
+            null
+        }
 
     // Retrieve the API key from environment variables
-    val API_KEY: String by lazy { System.getenv("COINGECKO_API_KEY") ?: dotenv["COINGECKO_API_KEY"] }
+    val API_KEY: String? by lazy { System.getenv("COINGECKO_API_KEY") ?: dotenv?.get("COINGECKO_API_KEY") }
 }
 
 class CryptoRepositoryImpl(
@@ -35,6 +36,10 @@ class CryptoRepositoryImpl(
     private val json = Json { ignoreUnknownKeys = true }
 
     override suspend fun fetchCoinMarkets(currency: Currency): List<CryptoSerializable>? {
+        if (Config.API_KEY == null) {
+            logger.error("API key not found. Please set COINGECKO_API_KEY environment variable.")
+            return null
+        }
         ApiCallTracker.recordApiCall() // Record the API call
         return try {
             val response: HttpResponse =
