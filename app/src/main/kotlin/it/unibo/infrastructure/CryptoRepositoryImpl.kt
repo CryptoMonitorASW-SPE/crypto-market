@@ -14,13 +14,16 @@ import it.unibo.domain.Currency
 import it.unibo.infrastructure.metrics.ApiCallTracker
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
 object Config {
+    private val logger: Logger = LoggerFactory.getLogger(Config::class.java)
     private val dotenv: Dotenv? =
         try {
             Dotenv.configure().directory("../../").load()
         } catch (e: DotenvException) {
+            logger.error("Failed to load .env file: ${e.message}")
             null
         }
 
