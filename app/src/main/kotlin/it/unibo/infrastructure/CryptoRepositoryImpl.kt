@@ -5,9 +5,13 @@ package it.unibo.infrastructure
 import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.DotenvException
 import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import it.unibo.domain.CryptoRepository
 import it.unibo.domain.CryptoSerializable
 import it.unibo.domain.Currency
@@ -32,9 +36,23 @@ object Config {
 }
 
 class CryptoRepositoryImpl(
-    private val client: HttpClient,
     private val logger: Logger,
 ) : CryptoRepository {
+
+    companion object {
+        const val REQUEST_TIMEOUT_MILLIS = 10_000L
+        const val CONNECT_TIMEOUT_MILLIS = 5_000L
+        const val SOCKET_TIMEOUT_MILLIS = 5_000L
+    }
+
+    private val client = HttpClient(CIO) {
+        install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
+        install(HttpTimeout) {
+            requestTimeoutMillis = REQUEST_TIMEOUT_MILLIS
+            connectTimeoutMillis = CONNECT_TIMEOUT_MILLIS
+            socketTimeoutMillis = SOCKET_TIMEOUT_MILLIS
+        }
+    }
     private val url = "https://api.coingecko.com/api/v3/coins/markets"
 
 //  private val ids = "bitcoin,ethereum,ripple,polkadot,solana,litecoin,cardano,doge"
@@ -81,5 +99,9 @@ class CryptoRepositoryImpl(
             logger.error("Serialization error: ${e.localizedMessage}")
             null
         }
+    }
+
+    override fun killClient() {
+        client.close()
     }
 }

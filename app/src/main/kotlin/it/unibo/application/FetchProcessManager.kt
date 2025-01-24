@@ -17,7 +17,7 @@ class FetchProcessManager(
         fetchJob = scope.launch {
             while (true) {
                 fetchService.fetchAndProcessData()
-                delay(FetchCoinMarketDataService.DELAY_MINUTES * 60_000L)
+                delay(FetchCoinMarketDataService.DELAY_MINUTES * MINUTES_TO_MS)
             }
         }
     }
@@ -25,5 +25,9 @@ class FetchProcessManager(
     fun stop() {
         fetchJob?.cancel()
         fetchJob = null
+    }
+
+    companion object {
+        const val MINUTES_TO_MS = 60_000L
     }
 }

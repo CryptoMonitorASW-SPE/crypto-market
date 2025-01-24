@@ -10,7 +10,14 @@ import io.ktor.serialization.kotlinx.json.*
 import it.unibo.application.FetchProcessManager
 
 class WebServer(private val manager: FetchProcessManager) {
-    private val server = embeddedServer(Netty, port = 8080) {
+
+    companion object {
+        const val PORT = 8080
+        const val GRACE_PERIOD = 1000L
+        const val TIMEOUT = 5000L
+    }
+
+    private val server = embeddedServer(Netty, port = PORT) {
         install(ContentNegotiation) { json() }
         routing {
             post("/start") {
@@ -32,6 +39,8 @@ class WebServer(private val manager: FetchProcessManager) {
     }
 
     fun stop() {
-        server.stop(1000, 5000)
+        server.stop(GRACE_PERIOD, TIMEOUT)
     }
+
+
 }
