@@ -48,6 +48,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
     implementation("io.github.cdimascio:dotenv-kotlin:6.5.0")
+    implementation(libs.ktor.server.core.jvm)
+    implementation(libs.ktor.server.netty.jvm)
+    implementation(libs.ktor.server.content.negotiation.jvm)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
