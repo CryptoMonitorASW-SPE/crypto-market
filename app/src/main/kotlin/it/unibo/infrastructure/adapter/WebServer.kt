@@ -31,6 +31,9 @@ class WebServer(private val manager: FetchProcessManager) {
                 get("/status") {
                     call.respond(mapOf("status" to if (manager.isRunning) "running" else "stopped"))
                 }
+                get("/health") {
+                    call.respond(mapOf("status" to "healthy"))
+                }
         }
 }
 
