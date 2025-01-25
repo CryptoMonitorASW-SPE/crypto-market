@@ -25,7 +25,7 @@ fun main() {
     val supervisor = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.Default + supervisor)
     val fetchProcessManager = FetchProcessManager(fetchService, scope)
-    val webServer = WebServer(fetchProcessManager).apply { start() }
+    val webServer = WebServer(fetchProcessManager, eventDispatcher).apply { start() }
 
     // Metrics service
     scope.launch {

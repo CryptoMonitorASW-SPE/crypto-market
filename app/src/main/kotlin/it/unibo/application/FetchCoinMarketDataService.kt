@@ -16,10 +16,9 @@ class FetchCoinMarketDataService(
 ) {
     companion object {
         const val DELAY_MINUTES = 5
-        const val MILLISECONDS_IN_A_MINUTE = (60 * 1000).toLong()
     }
 
-    suspend fun fetchAndProcessData() {
+    suspend fun fetchAndProcessData(): List<Crypto> {
         val startTime = System.currentTimeMillis()
         val currencies = Currency.getAllCurrencies()
         val cryptoMap = mutableMapOf<String, Crypto>()
@@ -31,9 +30,10 @@ class FetchCoinMarketDataService(
         val combinedCryptos = cryptoMap.values.toList()
         logger.info(
             "Combined data for ${combinedCryptos.size} cryptos at ${LocalDateTime.now()} in" +
-                " ${System.currentTimeMillis() - startTime} ms",
+                    " ${System.currentTimeMillis() - startTime} ms",
         )
         eventDispatcher.publish(combinedCryptos)
+        return combinedCryptos
     }
 
     private suspend fun processCurrencyData(
@@ -121,3 +121,4 @@ class FetchCoinMarketDataService(
         }
     }
 }
+

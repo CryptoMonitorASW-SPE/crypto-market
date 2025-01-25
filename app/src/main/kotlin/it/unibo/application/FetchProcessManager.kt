@@ -1,5 +1,6 @@
 package it.unibo.application
 
+import it.unibo.domain.Crypto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -10,13 +11,14 @@ class FetchProcessManager(
     private val scope: CoroutineScope,
 ) {
     private var fetchJob: Job? = null
+    private var latestData: List<Crypto>? = null
     val isRunning: Boolean get() = fetchJob?.isActive ?: false
 
     fun start() {
         if (isRunning) return
         fetchJob = scope.launch {
             while (true) {
-                fetchService.fetchAndProcessData()
+                latestData = fetchService.fetchAndProcessData()
                 delay(FetchCoinMarketDataService.DELAY_MINUTES * MINUTES_TO_MS)
             }
         }
@@ -25,6 +27,10 @@ class FetchProcessManager(
     fun stop() {
         fetchJob?.cancel()
         fetchJob = null
+    }
+
+    fun getLatestData(): List<Crypto>? {
+        return latestData
     }
 
     companion object {
