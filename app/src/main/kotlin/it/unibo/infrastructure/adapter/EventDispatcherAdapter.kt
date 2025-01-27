@@ -21,7 +21,10 @@ import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
 @Serializable
-data class EventPayload(val eventType: String, val payload: List<Crypto>)
+data class EventPayload(
+    val eventType: String,
+    val payload: List<Crypto>,
+)
 
 class EventDispatcherAdapter(
     private val httpServerHost: String = "event-dispatcher",

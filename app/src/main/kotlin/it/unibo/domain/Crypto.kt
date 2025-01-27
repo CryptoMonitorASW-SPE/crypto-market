@@ -2,31 +2,6 @@ package it.unibo.domain
 
 import kotlinx.serialization.Serializable
 
-// @Serializable
-// data class CurrencyValue(
-//    @SerialName("usd")
-//    val usd: Double? = null,
-//    @SerialName("eur")
-//    val eur: Double? = null,
-// )
-//
-// @Serializable
-// sealed class Currency(
-//    val code: String,
-// ) {
-//    @Serializable
-//    @SerialName("usd")
-//    data object USD : Currency("usd")
-//
-//    @Serializable
-//    @SerialName("eur")
-//    data object EUR : Currency("eur")
-//
-//    companion object {
-//        fun getAllCurrencies(): List<Currency> = listOf(USD, EUR)
-//    }
-// }
-
 @Serializable
 data class Crypto(
     val id: String,

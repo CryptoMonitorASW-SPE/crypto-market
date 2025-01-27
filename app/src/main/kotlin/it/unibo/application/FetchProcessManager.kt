@@ -16,12 +16,13 @@ class FetchProcessManager(
 
     fun start() {
         if (isRunning) return
-        fetchJob = scope.launch {
-            while (true) {
-                latestData = fetchService.fetchAndProcessData()
-                delay(FetchCoinMarketDataService.DELAY_MINUTES * MINUTES_TO_MS)
+        fetchJob =
+            scope.launch {
+                while (true) {
+                    latestData = fetchService.fetchAndProcessData()
+                    delay(FetchCoinMarketDataService.DELAY_MINUTES * MINUTES_TO_MS)
+                }
             }
-        }
     }
 
     fun stop() {
@@ -29,9 +30,7 @@ class FetchProcessManager(
         fetchJob = null
     }
 
-    fun getLatestData(): List<Crypto>? {
-        return latestData
-    }
+    fun getLatestData(): List<Crypto>? = latestData
 
     companion object {
         const val MINUTES_TO_MS = 60_000L

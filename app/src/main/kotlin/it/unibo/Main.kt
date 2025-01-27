@@ -25,7 +25,7 @@ fun main() {
     val supervisor = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.Default + supervisor)
     val fetchProcessManager = FetchProcessManager(fetchService, scope)
-    val webServer = WebServer(fetchProcessManager, eventDispatcher).apply { start() }
+    val webServer = WebServer(fetchProcessManager, repository, eventDispatcher).apply { start() }
 
     // Metrics service
     scope.launch {
@@ -33,16 +33,17 @@ fun main() {
     }
 
     // Shutdown hook
-    Runtime.getRuntime().addShutdownHook(Thread {
-        runBlocking {
-            logger.info("Shutting down...")
-            webServer.stop()
-            supervisor.cancelAndJoin()
-            repository.killClient()
-            logger.info("Shutdown complete")
-        }
-    })
+    Runtime.getRuntime().addShutdownHook(
+        Thread {
+            runBlocking {
+                logger.info("Shutting down...")
+                webServer.stop()
+                supervisor.cancelAndJoin()
+                repository.killClient()
+                logger.info("Shutdown complete")
+            }
+        },
+    )
 
     runBlocking { supervisor.join() }
-
 }

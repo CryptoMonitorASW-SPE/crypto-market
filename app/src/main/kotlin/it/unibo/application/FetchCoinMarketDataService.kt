@@ -30,7 +30,7 @@ class FetchCoinMarketDataService(
         val combinedCryptos = cryptoMap.values.toList()
         logger.info(
             "Combined data for ${combinedCryptos.size} cryptos at ${LocalDateTime.now()} in" +
-                    " ${System.currentTimeMillis() - startTime} ms",
+                " ${System.currentTimeMillis() - startTime} ms",
         )
         eventDispatcher.publish(combinedCryptos)
         return combinedCryptos
@@ -121,4 +121,3 @@ class FetchCoinMarketDataService(
         }
     }
 }
-
