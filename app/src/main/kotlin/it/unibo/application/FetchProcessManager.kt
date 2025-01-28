@@ -1,5 +1,6 @@
 package it.unibo.application
 
+import io.ktor.util.network.*
 import it.unibo.domain.Currency
 import it.unibo.infrastructure.adapter.EventPayload
 import it.unibo.infrastructure.adapter.EventType
@@ -9,12 +10,17 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.io.IOException
+import kotlinx.serialization.SerializationException
+import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
 
 class FetchProcessManager(
     private val fetchService: FetchCoinMarketDataService,
     private val scope: CoroutineScope,
 ) {
+    private val logger = LoggerFactory.getLogger(FetchProcessManager::class.java)
+
     // Map to hold active jobs per currency
     private val fetchJobs = ConcurrentHashMap<Currency, Job>()
 
@@ -38,9 +44,14 @@ class FetchProcessManager(
                                 Currency.EUR -> EventType.CRYPTO_UPDATE_EUR
                             }
                         latestData[currency] = EventPayload(eventType = eventType, payload = data)
+                    } catch (e: IOException) {
+                        logger.error("Failed to fetch data for $currency", e)
+                    } catch (e: SerializationException) {
+                        logger.error("Failed to parse data for $currency", e)
+                    } catch (e: UnresolvedAddressException) {
+                        logger.error("Failed to resolve address for $currency", e)
                     } catch (e: Exception) {
-                        // Handle exceptions (e.g., log them)
-                        e.printStackTrace()
+                        logger.error("An unexpected error occurred for $currency", e)
                     }
                     delay(FetchCoinMarketDataService.DELAY_MINUTES * MINUTES_TO_MS)
                 }
