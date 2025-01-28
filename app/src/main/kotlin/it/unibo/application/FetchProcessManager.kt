@@ -50,8 +50,6 @@ class FetchProcessManager(
                         logger.error("Failed to parse data for $currency", e)
                     } catch (e: UnresolvedAddressException) {
                         logger.error("Failed to resolve address for $currency", e)
-                    } catch (e: Exception) {
-                        logger.error("An unexpected error occurred for $currency", e)
                     }
                     delay(FetchCoinMarketDataService.DELAY_MINUTES * MINUTES_TO_MS)
                 }
