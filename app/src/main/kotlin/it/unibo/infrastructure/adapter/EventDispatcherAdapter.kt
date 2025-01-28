@@ -20,9 +20,19 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
+@Serializable(with = EventTypeSerializer::class)
+data class EventType(
+    val type: String,
+) {
+    companion object {
+        val CRYPTO_UPDATE_USD = EventType("CRYPTO_UPDATE_USD")
+        val CRYPTO_UPDATE_EUR = EventType("CRYPTO_UPDATE_EUR")
+    }
+}
+
 @Serializable
 data class EventPayload(
-    val eventType: String,
+    val eventType: EventType,
     val payload: List<Crypto>,
 )
 
@@ -35,12 +45,11 @@ class EventDispatcherAdapter(
     private val client = HttpClient(CIO)
     private val mutex = Mutex()
 
-    fun publish(data: List<Crypto>) {
+    fun publish(data: EventPayload) {
         scope.launch {
             mutex.withLock {
                 try {
-                    val eventPayload = EventPayload(eventType = "CRYPTO_UPDATE", payload = data)
-                    val jsonData = Json.encodeToString(eventPayload)
+                    val jsonData = Json.encodeToString(data)
                     logger.info("Publishing data: $jsonData")
                     val response: HttpResponse =
                         client.post {
@@ -48,7 +57,7 @@ class EventDispatcherAdapter(
                                 protocol = URLProtocol.HTTP
                                 host = httpServerHost
                                 port = httpServerPort
-                                encodedPath = "/realtime/events"
+                                encodedPath = "/realtime/events/cryptomarketdata"
                             }
                             contentType(ContentType.Application.Json)
                             setBody(jsonData)

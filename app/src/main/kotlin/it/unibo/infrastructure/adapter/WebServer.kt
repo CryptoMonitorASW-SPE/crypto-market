@@ -24,40 +24,69 @@ class WebServer(
         const val TIMEOUT = 5000L
     }
 
+    private suspend fun handleStart(
+        manager: FetchProcessManager,
+        eventDispatcher: EventDispatcherAdapter,
+        call: ApplicationCall,
+        currency: Currency,
+    ) {
+        if (manager.isRunning(currency)) {
+            val latestData = manager.getLatestData(currency)
+            if (latestData != null) {
+                eventDispatcher.publish(latestData)
+                call.respond(
+                    mapOf(
+                        "status" to "already running",
+                        "currency" to currency.code,
+                        "data" to "Data sent to event dispatcher",
+                    ),
+                )
+            } else {
+                call.respond(
+                    mapOf(
+                        "status" to "already running",
+                        "currency" to currency.code,
+                        "data" to "No data available",
+                    ),
+                )
+            }
+        } else {
+            manager.start(currency)
+            call.respond(mapOf("status" to "started", "currency" to currency.code))
+        }
+    }
+
     private val server =
         embeddedServer(Netty, port = PORT) {
             install(ContentNegotiation) { json() }
             routing {
                 post("/start") {
-                    if (manager.isRunning) {
-                        val latestData = manager.getLatestData()
-                        if (latestData != null) {
-                            eventDispatcher.publish(latestData)
-                            call.respond(
-                                mapOf(
-                                    "status" to "already running",
-                                    "data" to "Data sent to event dispatcher",
-                                ),
-                            )
-                        } else {
-                            call.respond(
-                                mapOf(
-                                    "status" to "already running",
-                                    "data" to "No data available",
-                                ),
-                            )
-                        }
-                    } else {
-                        manager.start()
-                        call.respond(mapOf("status" to "started"))
-                    }
+                    val currencyParam = call.parameters["currency"] ?: "USD"
+                    val currency = Currency.fromCode(currencyParam)
+                    handleStart(manager, eventDispatcher, call, currency)
                 }
+
                 post("/stop") {
-                    manager.stop()
-                    call.respond(mapOf("status" to "stopped"))
+                    val currencyParam = call.parameters["currency"] ?: "USD"
+                    val currency = Currency.fromCode(currencyParam)
+                    manager.stop(currency)
+                    call.respond(mapOf("status" to "stopped", "currency" to currency.code))
                 }
+
                 get("/status") {
-                    call.respond(mapOf("status" to if (manager.isRunning) "running" else "stopped"))
+                    val statuses = Currency.getAllCurrencies().associateWith { manager.isRunning(it) }
+                    call.respond(statuses)
+                }
+
+                get("/data") {
+                    val currencyParam = call.parameters["currency"] ?: "USD"
+                    val currency = Currency.fromCode(currencyParam)
+                    val data = manager.getLatestData(currency)
+                    if (data != null) {
+                        call.respond(data)
+                    } else {
+                        call.respond(HttpStatusCode.NoContent)
+                    }
                 }
                 get("/health") {
                     call.respond(mapOf("status" to "healthy"))

@@ -19,8 +19,3 @@ data class CryptoChartData(
     val dataPoints: List<DataPoint>,
     val timestamp: Long,
 )
-
-@Serializable
-data class CryptoChartDataResponse(
-    val dataPoints: List<DataPoint>,
-)
