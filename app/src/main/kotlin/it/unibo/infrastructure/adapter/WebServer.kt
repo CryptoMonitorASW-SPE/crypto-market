@@ -116,6 +116,21 @@ class WebServer(
                         call.respond(HttpStatusCode.NotFound, "Chart data not found")
                     }
                 }
+
+                get("/details/{coinId}") {
+                    val coinId =
+                        call.parameters["coinId"]
+                            ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing or malformed coinId")
+                    val details =
+                        runBlocking {
+                            repository.fetchCoinDetails(coinId)
+                        }
+                    if (details != null) {
+                        call.respond(details)
+                    } else {
+                        call.respond(HttpStatusCode.NotFound, "Details not found")
+                    }
+                }
             }
         }
 
