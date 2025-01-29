@@ -14,6 +14,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import it.unibo.domain.Crypto
 import it.unibo.domain.CryptoChartData
 import it.unibo.domain.CryptoRepository
 import it.unibo.domain.CryptoSerializable
@@ -64,7 +65,7 @@ class CryptoRepositoryImpl(
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    override suspend fun fetchCoinMarkets(currency: Currency): List<CryptoSerializable>? {
+    override suspend fun fetchCoinMarkets(currency: Currency): List<Crypto>? {
         if (Config.API_KEY == null) {
             logger.error("API key not found. Please set COINGECKO_API_KEY environment variable.")
             return null
@@ -82,8 +83,13 @@ class CryptoRepositoryImpl(
                 }
             if (response.status == HttpStatusCode.OK) {
                 val responseBody: String = response.bodyAsText()
+                val cryptoList = mutableListOf<Crypto>()
                 val cryptos: List<CryptoSerializable> = json.decodeFromString(responseBody)
-                cryptos
+                cryptos.forEach { cryptoSerializable ->
+                    val crypto = mapToCrypto(cryptoSerializable)
+                    cryptoList.add(crypto)
+                }
+                cryptoList
             } else {
                 logger.warn("API request failed with status ${response.status} at ${LocalDateTime.now()}")
                 null
@@ -209,4 +215,33 @@ class CryptoRepositoryImpl(
     override fun killClient() {
         client.close()
     }
+
+    private fun mapToCrypto(crypto: CryptoSerializable): Crypto =
+        Crypto(
+            id = crypto.id,
+            symbol = crypto.symbol,
+            name = crypto.name,
+            image = crypto.image!!,
+            price = crypto.currentPrice,
+            marketCap = crypto.marketCap?.toDouble(),
+            marketCapRank = crypto.marketCapRank,
+            fullyDilutedValuation = crypto.fullyDilutedValuation?.toDouble(),
+            totalVolume = crypto.totalVolume?.toDouble(),
+            high24h = crypto.high24h,
+            low24h = crypto.low24h,
+            priceChange24h = crypto.priceChange24h,
+            priceChangePercentage24h = crypto.priceChangePercentage24h,
+            marketCapChange24h = crypto.marketCapChange24h,
+            marketCapChangePercentage24h = crypto.marketCapChangePercentage24h,
+            circulatingSupply = crypto.circulatingSupply,
+            totalSupply = crypto.totalSupply,
+            maxSupply = crypto.maxSupply,
+            ath = crypto.ath,
+            athChangePercentage = crypto.athChangePercentage,
+            athDate = crypto.athDate,
+            atl = crypto.atl,
+            atlChangePercentage = crypto.atlChangePercentage,
+            atlDate = crypto.atlDate,
+            lastUpdated = crypto.lastUpdated,
+        )
 }
