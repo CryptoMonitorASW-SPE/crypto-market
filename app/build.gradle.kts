@@ -1,7 +1,7 @@
 import io.github.andreabrighi.gradle.gitsemver.conventionalcommit.ConventionalCommit
 
 plugins {
-    id("org.danilopianini.git-sensitive-semantic-versioning") version "3.1.7"
+    id("org.danilopianini.git-sensitive-semantic-versioning") version "4.0.2"
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     alias(libs.plugins.kotlin.jvm)
     kotlin("plugin.serialization") version "1.9.25"
