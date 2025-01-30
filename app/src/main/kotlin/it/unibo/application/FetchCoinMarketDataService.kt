@@ -14,7 +14,7 @@ class FetchCoinMarketDataService(
     private val eventDispatcher: EventDispatcherAdapter,
 ) {
     companion object {
-        const val DELAY_MINUTES = 1
+        const val DELAY_MINUTES = 10
     }
 
     suspend fun fetchAndProcessData(currency: Currency): List<Crypto> {
