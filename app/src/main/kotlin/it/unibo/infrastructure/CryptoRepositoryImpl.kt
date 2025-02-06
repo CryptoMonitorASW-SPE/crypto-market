@@ -60,8 +60,7 @@ class CryptoRepositoryImpl(
             }
         }
 
-//  private val ids = "bitcoin,ethereum,ripple,polkadot,solana,litecoin,cardano,doge"
-    private val ids = "bitcoin,ethereum"
+    private val ids = "bitcoin,ethereum,ripple,polkadot,solana,litecoin,cardano"
 
     private val json = Json { ignoreUnknownKeys = true }
 
