@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package it.unibo.infrastructure.adapter
 
 import io.ktor.http.*

@@ -6,7 +6,6 @@ import CryptoDetails
 import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.DotenvException
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -21,7 +20,6 @@ import it.unibo.domain.CryptoSerializable
 import it.unibo.domain.Currency
 import it.unibo.domain.DataPoint
 import it.unibo.infrastructure.metrics.ApiCallTracker
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

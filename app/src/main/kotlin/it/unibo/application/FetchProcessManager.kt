@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package it.unibo.application
 
 import io.ktor.util.network.*
@@ -6,7 +8,6 @@ import it.unibo.infrastructure.adapter.EventPayload
 import it.unibo.infrastructure.adapter.EventType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch

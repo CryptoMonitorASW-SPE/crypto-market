@@ -19,12 +19,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 
-@Serializable
-data class CurrencyValue(
-    @Serializable(with = CurrencyMapSerializer::class)
-    val values: Map<Currency, Double?>,
-)
-
 @Serializable(with = CurrencySerializer::class)
 sealed class Currency(
     val code: String,
