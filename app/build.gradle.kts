@@ -1,13 +1,11 @@
 import io.github.andreabrighi.gradle.gitsemver.conventionalcommit.ConventionalCommit
 
 plugins {
-    id("org.danilopianini.git-sensitive-semantic-versioning") version "4.0.2"
-    // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
+    alias(libs.plugins.git.sensitive.semantic.versioning)
     alias(libs.plugins.kotlin.jvm)
-    kotlin("plugin.serialization") version "1.9.25"
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
-    // Apply the application plugin to add support for building a CLI application in Java.
     application
 }
 
@@ -16,7 +14,6 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // Add the plugin to the classpath
         classpath("io.github.andreabrighi:conventional-commit-strategy-for-git-sensitive-semantic-versioning-gradle-plugin:1.0.15")
     }
 }
@@ -27,19 +24,19 @@ gitSemVer {
 }
 
 repositories {
-    // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
 
 dependencies {
-    // Use the Kotlin JUnit 5 integration.
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-
-    // Use the JUnit 5 integration.
+    // Dependencies for testing
+    testImplementation(libs.kotlin.test.junit5)
     testImplementation(libs.junit.jupiter.engine)
+    testImplementation(libs.konsist)
 
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    // Dependencies for runtime
+    testRuntimeOnly(libs.junit.platform.launcher)
 
+    // Dependencies for the application
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.content.negotiation)
@@ -48,6 +45,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
     implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
+    implementation(libs.dotenv.kotlin)
     implementation(libs.ktor.server.core.jvm)
     implementation(libs.ktor.server.netty.jvm)
     implementation(libs.ktor.server.content.negotiation.jvm)
@@ -61,12 +59,10 @@ java {
 }
 
 application {
-    // Define the main class for the application.
     mainClass = "it.unibo.MainKt"
 }
 
 tasks.named<Test>("test") {
-    // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
 
@@ -85,7 +81,7 @@ tasks.register("printVersion") {
 tasks.jar {
     archiveFileName.set("app.jar")
     manifest {
-        attributes["Main-Class"] = application.mainClass.get() // or specify your main class directly
+        attributes["Main-Class"] = application.mainClass.get()
     }
 
     // Include all runtime dependencies into the JAR file
@@ -96,9 +92,7 @@ tasks.jar {
             .map { zipTree(it) },
     )
 
-    // Optionally, include your compiled classes (if not already included by default)
     from(sourceSets.main.get().output)
 
-    // Ensure the JAR is built as a single fat JAR
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
