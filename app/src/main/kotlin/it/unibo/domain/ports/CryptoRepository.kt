@@ -1,6 +1,9 @@
-package it.unibo.domain
+package it.unibo.domain.ports
 
 import CryptoDetails
+import it.unibo.domain.Crypto
+import it.unibo.domain.CryptoChartData
+import it.unibo.domain.Currency
 
 interface CryptoRepository {
     suspend fun fetchCoinMarkets(currency: Currency): List<Crypto>?

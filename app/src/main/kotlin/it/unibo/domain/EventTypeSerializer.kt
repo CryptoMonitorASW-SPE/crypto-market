@@ -1,4 +1,4 @@
-package it.unibo.infrastructure.adapter
+package it.unibo.domain
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

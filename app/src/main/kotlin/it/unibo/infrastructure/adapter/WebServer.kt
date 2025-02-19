@@ -10,15 +10,16 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import it.unibo.application.FetchProcessManager
-import it.unibo.domain.CryptoRepository
 import it.unibo.domain.Currency
+import it.unibo.domain.ports.CryptoRepository
+import it.unibo.domain.ports.EventDispatcher
+import it.unibo.domain.ports.FetchProcess
 import kotlinx.coroutines.runBlocking
 
 class WebServer(
-    private val manager: FetchProcessManager,
+    private val manager: FetchProcess,
     private val repository: CryptoRepository,
-    private val eventDispatcher: EventDispatcherAdapter,
+    private val eventDispatcher: EventDispatcher,
 ) {
     companion object {
         const val PORT = 8080
@@ -27,8 +28,8 @@ class WebServer(
     }
 
     private suspend fun handleStart(
-        manager: FetchProcessManager,
-        eventDispatcher: EventDispatcherAdapter,
+        manager: FetchProcess,
+        eventDispatcher: EventDispatcher,
         call: ApplicationCall,
         currency: Currency,
     ) {

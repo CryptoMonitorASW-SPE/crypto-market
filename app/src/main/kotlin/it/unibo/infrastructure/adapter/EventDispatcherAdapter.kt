@@ -8,44 +8,28 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.util.network.UnresolvedAddressException
-import it.unibo.domain.Crypto
+import it.unibo.domain.EventPayload
+import it.unibo.domain.ports.EventDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.io.IOException
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
-
-@Serializable(with = EventTypeSerializer::class)
-data class EventType(
-    val type: String,
-) {
-    companion object {
-        val CRYPTO_UPDATE_USD = EventType("CRYPTO_UPDATE_USD")
-        val CRYPTO_UPDATE_EUR = EventType("CRYPTO_UPDATE_EUR")
-    }
-}
-
-@Serializable
-data class EventPayload(
-    val eventType: EventType,
-    val payload: List<Crypto>,
-)
 
 class EventDispatcherAdapter(
     private val httpServerHost: String = "event-dispatcher",
     private val httpServerPort: Int = 3000,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
-) {
+) : EventDispatcher {
     private val logger = LoggerFactory.getLogger(EventDispatcherAdapter::class.java)
     private val client = HttpClient(CIO)
     private val mutex = Mutex()
 
-    fun publish(data: EventPayload) {
+    override fun publish(data: EventPayload) {
         scope.launch {
             mutex.withLock {
                 try {
@@ -74,7 +58,7 @@ class EventDispatcherAdapter(
         }
     }
 
-    fun close() {
+    override fun close() {
         client.close()
         logger.info("HTTP client closed")
     }

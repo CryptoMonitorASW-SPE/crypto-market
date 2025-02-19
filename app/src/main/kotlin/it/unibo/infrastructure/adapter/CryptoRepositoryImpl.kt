@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:no-wildcard-imports")
 
-package it.unibo.infrastructure
+package it.unibo.infrastructure.adapter
 
 import CryptoDetails
 import io.github.cdimascio.dotenv.Dotenv
@@ -15,11 +15,10 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import it.unibo.domain.Crypto
 import it.unibo.domain.CryptoChartData
-import it.unibo.domain.CryptoRepository
 import it.unibo.domain.CryptoSerializable
 import it.unibo.domain.Currency
 import it.unibo.domain.DataPoint
-import it.unibo.infrastructure.metrics.ApiCallTracker
+import it.unibo.domain.ports.CryptoRepository
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -69,7 +68,6 @@ class CryptoRepositoryImpl(
         }
         val urlMarkets = "https://api.coingecko.com/api/v3/coins/markets"
 
-        ApiCallTracker.recordApiCall() // Record the API call
         return try {
             val response: HttpResponse =
                 client.get(urlMarkets) {

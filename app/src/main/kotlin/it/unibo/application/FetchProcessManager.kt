@@ -4,8 +4,10 @@ package it.unibo.application
 
 import io.ktor.util.network.*
 import it.unibo.domain.Currency
-import it.unibo.infrastructure.adapter.EventPayload
-import it.unibo.infrastructure.adapter.EventType
+import it.unibo.domain.EventPayload
+import it.unibo.domain.EventType
+import it.unibo.domain.ports.FetchCoinMarketData
+import it.unibo.domain.ports.FetchProcess
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,22 +19,18 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
 
 class FetchProcessManager(
-    private val fetchService: FetchCoinMarketDataService,
+    private val fetchService: FetchCoinMarketData,
     private val scope: CoroutineScope,
-) {
+) : FetchProcess {
     private val logger = LoggerFactory.getLogger(FetchProcessManager::class.java)
 
-    // Map to hold active jobs per currency
     private val fetchJobs = ConcurrentHashMap<Currency, Job>()
 
-    // Map to hold latest data per currency
     private val latestData = ConcurrentHashMap<Currency, EventPayload>()
 
-    // Check if a job is running for a specific currency
-    fun isRunning(currency: Currency): Boolean = fetchJobs[currency]?.isActive ?: false
+    override fun isRunning(currency: Currency): Boolean = fetchJobs[currency]?.isActive ?: false
 
-    // Start fetching data for a specific currency
-    fun start(currency: Currency) {
+    override fun start(currency: Currency) {
         if (isRunning(currency)) return
         val job =
             scope.launch {
@@ -58,18 +56,15 @@ class FetchProcessManager(
         fetchJobs[currency] = job
     }
 
-    // Stop fetching data for a specific currency
-    fun stop(currency: Currency) {
+    override fun stop(currency: Currency) {
         fetchJobs[currency]?.cancel()
         fetchJobs.remove(currency)
         latestData.remove(currency)
     }
 
-    // Get the latest data for a specific currency
-    fun getLatestData(currency: Currency): EventPayload? = latestData[currency]
+    override fun getLatestData(currency: Currency): EventPayload? = latestData[currency]
 
-    // Stop all fetch jobs
-    fun stopAll() {
+    override fun stopAll() {
         fetchJobs.values.forEach { it.cancel() }
         fetchJobs.clear()
         latestData.clear()
