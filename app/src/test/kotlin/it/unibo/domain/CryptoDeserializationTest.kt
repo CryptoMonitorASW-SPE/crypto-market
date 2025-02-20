@@ -1,6 +1,8 @@
 
 package it.unibo.domain
 
+import CryptoDetails
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -69,6 +71,57 @@ class CryptoDeserializationTest {
         assertEquals(757073.86, crypto.atlChangePercentage!!)
         assertEquals("2015-10-20T00:00:00.000Z", crypto.atlDate)
         assertEquals("2025-01-21T15:06:01.226Z", crypto.lastUpdated)
+    }
+
+    @Test
+    fun `CryptoDetails deserialization from JSON`() {
+        val jsonString = loadResource("bitcoin_details.json")
+        val cryptoDetails: CryptoDetails = json.decodeFromString(jsonString)
+
+        assertEquals(83.44, cryptoDetails.sentimentVotesUpPercentage)
+        assertEquals(16.56, cryptoDetails.sentimentVotesDownPercentage)
+        assertEquals(listOf("http://www.bitcoin.org"), cryptoDetails.links.homepage)
+        assertEquals("https://bitcoin.org/bitcoin.pdf", cryptoDetails.links.whitepaper)
+    }
+
+    @Test
+    fun `CryptoChartData deserialization from 7 days OHLC data`() {
+        val jsonString = loadResource("bitcoin_ohlc_7_usd.json")
+        val dataPoints: List<DataPoint> = json.decodeFromString(jsonString)
+
+        assertEquals(42, dataPoints.size)
+
+        assertEquals(1739448000000, dataPoints[0].timestamp)
+        assertEquals(96037.0, dataPoints[0].open)
+        assertEquals(96348.0, dataPoints[0].high)
+        assertEquals(95835.0, dataPoints[0].low)
+        assertEquals(95835.0, dataPoints[0].close)
+
+        assertEquals(1740038400000, dataPoints[41].timestamp)
+        assertEquals(97061.0, dataPoints[41].open)
+        assertEquals(97327.0, dataPoints[41].high)
+        assertEquals(96835.0, dataPoints[41].low)
+        assertEquals(97005.0, dataPoints[41].close)
+    }
+
+    @Test
+    fun `CryptoChartData deserialization from 14 days OHLC data`() {
+        val jsonString = loadResource("bitcoin_ohlc_14_usd.json")
+        val dataPoints: List<DataPoint> = json.decodeFromString(jsonString)
+
+        assertEquals(84, dataPoints.size)
+
+        assertEquals(1738843200000, dataPoints[0].timestamp)
+        assertEquals(98251.0, dataPoints[0].open)
+        assertEquals(99132.0, dataPoints[0].high)
+        assertEquals(98014.0, dataPoints[0].low)
+        assertEquals(99111.0, dataPoints[0].close)
+
+        assertEquals(1740038400000, dataPoints.last().timestamp)
+        assertEquals(97061.0, dataPoints.last().open)
+        assertEquals(97327.0, dataPoints.last().high)
+        assertEquals(96835.0, dataPoints.last().low)
+        assertEquals(97005.0, dataPoints.last().close)
     }
 
     private fun loadResource(fileName: String): String =
