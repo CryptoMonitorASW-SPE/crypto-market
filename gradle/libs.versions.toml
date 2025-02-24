@@ -8,8 +8,8 @@ ktor = "3.0.3"
 logback = "1.5.16"
 coroutines = "1.10.1"
 serialization = "1.8.0"
-dotenvKotlin= "6.5.0"
 konsist = "0.17.3"
+dotenvKotlin= "6.5.1" 
 dokka = "2.0.0"
 
 [libraries]
@@ -24,8 +24,8 @@ logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter-engine" }
-dotenv-kotlin = { group = "io.github.cdimascio", name = "dotenv-kotlin", version.ref = "dotenvKotlin" }
 konsist = { group = "com.lemonappdev", name = "konsist", version.ref = "konsist" }
+dotenv-kotlin = { group = "io.github.cdimascio", name = "dotenv-kotlin", version.ref = "dotenvKotlin" }
 kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 

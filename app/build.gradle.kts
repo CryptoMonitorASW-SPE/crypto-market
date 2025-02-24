@@ -42,7 +42,7 @@ dependencies {
     implementation(libs.logback.classic)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
-    implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
+    implementation(libs.dotenv.kotlin)
     implementation(libs.dotenv.kotlin)
 }
 
