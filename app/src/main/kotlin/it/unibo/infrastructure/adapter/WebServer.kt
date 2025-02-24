@@ -16,6 +16,9 @@ import it.unibo.domain.ports.EventDispatcher
 import it.unibo.domain.ports.FetchProcess
 import kotlinx.coroutines.runBlocking
 
+/**
+ * WebServer provides HTTP endpoints to control and monitor the data fetching process.
+ */
 class WebServer(
     private val manager: FetchProcess,
     private val repository: CryptoRepository,
@@ -27,12 +30,22 @@ class WebServer(
         const val TIMEOUT = 5000L
     }
 
-    private suspend fun handleStart(
-        manager: FetchProcess,
-        eventDispatcher: EventDispatcher,
-        call: ApplicationCall,
-        currency: Currency,
-    ) {
+    /**
+     * Handles the "POST /start" endpoint.
+     *
+     * <p>If the fetch process is already running for the specified currency:</p>
+     * <ul>
+     *  <li>If latest data is available, it publishes the data via the event dispatcher and responds 
+     *      with a message indicating the data was sent.</li>
+     *  <li>If no data is available, it responds with a "no data available" message.</li>
+     * </ul>
+     * <p>If the process is not running, it starts the process and responds with the "started" status.</p>
+     *
+     * @param call the application call.
+     */
+    private suspend fun postStart(call: ApplicationCall) {
+        val currencyParam = call.parameters["currency"] ?: "USD"
+        val currency = Currency.fromCode(currencyParam)
         if (manager.isRunning(currency)) {
             val latestData = manager.getLatestData(currency)
             if (latestData != null) {
@@ -59,88 +72,151 @@ class WebServer(
         }
     }
 
+    /**
+     * Handles the "POST /stop" endpoint.
+     *
+     * Stops the fetch process for the specified currency.
+     *
+     * @param call the application call.
+     */
+    private suspend fun postStop(call: ApplicationCall) {
+        val currencyParam = call.parameters["currency"] ?: "USD"
+        val currency = Currency.fromCode(currencyParam)
+        manager.stop(currency)
+        call.respond(mapOf("status" to "stopped", "currency" to currency.code))
+    }
+
+    /**
+     * Handles the "GET /status" endpoint.
+     *
+     * Returns the running status for all supported currencies.
+     *
+     * @param call the application call.
+     */
+    private suspend fun getStatus(call: ApplicationCall) {
+        val statuses = Currency.getAllCurrencies().associateWith { manager.isRunning(it) }
+        call.respond(statuses)
+    }
+
+    /**
+     * Handles the "GET /data" endpoint.
+     *
+     * Returns the latest data available for the specified currency.
+     * Responds with HTTP 204 if no data is available.
+     *
+     * @param call the application call.
+     */
+    private suspend fun getData(call: ApplicationCall) {
+        val currencyParam = call.parameters["currency"] ?: "USD"
+        val currency = Currency.fromCode(currencyParam)
+        val data = manager.getLatestData(currency)
+        if (data != null) {
+            call.respond(data)
+        } else {
+            call.respond(HttpStatusCode.NoContent)
+        }
+    }
+
+    /**
+     * Handles the "GET /health" endpoint.
+     *
+     * Provides a simple health-check response.
+     *
+     * @param call the application call.
+     */
+    private suspend fun getHealth(call: ApplicationCall) {
+        call.respond(mapOf("status" to "healthy"))
+    }
+
+    /**
+     * Handles the "GET /chart/{coinId}/{currency}/{days}" endpoint.
+     *
+     * Retrieves chart data for the specified cryptocurrency.
+     *
+     * @param call the application call.
+     */
+    private suspend fun getChart(call: ApplicationCall) {
+        val coinId = call.parameters["coinId"]
+            ?: return call.respond(HttpStatusCode.BadRequest, "Missing or malformed coinId")
+        val currencyParam = call.parameters["currency"]
+            ?: return call.respond(HttpStatusCode.BadRequest, "Missing or malformed currency")
+        val days = call.parameters["days"]?.toIntOrNull()
+            ?: return call.respond(HttpStatusCode.BadRequest, "Missing or malformed days")
+
+        val chartData =
+            runBlocking {
+                repository.fetchCoinChartData(
+                    coinId,
+                    Currency.fromCode(currencyParam),
+                    days,
+                )
+            }
+        if (chartData != null) {
+            call.respond(chartData)
+        } else {
+            call.respond(HttpStatusCode.NotFound, "Chart data not found")
+        }
+    }
+
+    /**
+     * Handles the "GET /details/{coinId}" endpoint.
+     *
+     * Retrieves detailed information for the specified cryptocurrency.
+     *
+     * @param call the application call.
+     */
+    private suspend fun getDetails(call: ApplicationCall) {
+        val coinId = call.parameters["coinId"]
+            ?: return call.respond(HttpStatusCode.BadRequest, "Missing or malformed coinId")
+        val details =
+            runBlocking {
+                repository.fetchCoinDetails(coinId)
+            }
+        if (details != null) {
+            call.respond(details)
+        } else {
+            call.respond(HttpStatusCode.NotFound, "Details not found")
+        }
+    }
+
     private val server =
         embeddedServer(Netty, port = PORT) {
             install(ContentNegotiation) { json() }
             routing {
                 post("/start") {
-                    val currencyParam = call.parameters["currency"] ?: "USD"
-                    val currency = Currency.fromCode(currencyParam)
-                    handleStart(manager, eventDispatcher, call, currency)
+                    postStart(call)
                 }
-
                 post("/stop") {
-                    val currencyParam = call.parameters["currency"] ?: "USD"
-                    val currency = Currency.fromCode(currencyParam)
-                    manager.stop(currency)
-                    call.respond(mapOf("status" to "stopped", "currency" to currency.code))
+                    postStop(call)
                 }
-
                 get("/status") {
-                    val statuses = Currency.getAllCurrencies().associateWith { manager.isRunning(it) }
-                    call.respond(statuses)
+                    getStatus(call)
                 }
-
                 get("/data") {
-                    val currencyParam = call.parameters["currency"] ?: "USD"
-                    val currency = Currency.fromCode(currencyParam)
-                    val data = manager.getLatestData(currency)
-                    if (data != null) {
-                        call.respond(data)
-                    } else {
-                        call.respond(HttpStatusCode.NoContent)
-                    }
+                    getData(call)
                 }
                 get("/health") {
-                    call.respond(mapOf("status" to "healthy"))
+                    getHealth(call)
                 }
                 get("/chart/{coinId}/{currency}/{days}") {
-                    val coinId =
-                        call.parameters["coinId"]
-                            ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing or malformed coinId")
-                    val currency =
-                        call.parameters["currency"]
-                            ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing or malformed currency")
-                    val days =
-                        call.parameters["days"]?.toIntOrNull()
-                            ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing or malformed days")
-
-                    val chartData =
-                        runBlocking {
-                            repository.fetchCoinChartData(
-                                coinId,
-                                Currency.fromCode(currency),
-                                days,
-                            )
-                        }
-                    if (chartData != null) {
-                        call.respond(chartData)
-                    } else {
-                        call.respond(HttpStatusCode.NotFound, "Chart data not found")
-                    }
+                    getChart(call)
                 }
-
                 get("/details/{coinId}") {
-                    val coinId =
-                        call.parameters["coinId"]
-                            ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing or malformed coinId")
-                    val details =
-                        runBlocking {
-                            repository.fetchCoinDetails(coinId)
-                        }
-                    if (details != null) {
-                        call.respond(details)
-                    } else {
-                        call.respond(HttpStatusCode.NotFound, "Details not found")
-                    }
+                    getDetails(call)
                 }
             }
         }
 
+    /**
+     * Starts the web server.
+     */
     fun start() {
         server.start(wait = true)
     }
 
+    /**
+     * Stops the web server.
+     */
     fun stop() {
         server.stop(GRACE_PERIOD, TIMEOUT)
     }

@@ -28,7 +28,6 @@ fun main() {
     val fetchProcessManager: FetchProcess = FetchProcessManager(fetchService, scope)
     val webServer = WebServer(fetchProcessManager, repository, eventDispatcher).apply { start() }
 
-    // Shutdown hook
     Runtime.getRuntime().addShutdownHook(
         Thread {
             runBlocking {
