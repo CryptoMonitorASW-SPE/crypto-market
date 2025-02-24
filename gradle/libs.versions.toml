@@ -1,7 +1,7 @@
 [versions]
 junit-jupiter-engine = "5.11.4"
 ktlint = "12.1.2"
-detekt = "1.23.7"
+detekt = "1.23.8"
 ktor = "3.0.3"
 logback = "1.5.16"
 coroutines = "1.10.1"
