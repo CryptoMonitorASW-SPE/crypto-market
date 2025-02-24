@@ -136,23 +136,18 @@ class WebServer(
      * @param call the application call.
      */
     private suspend fun getChart(call: ApplicationCall) {
-        val coinId =
-            call.parameters["coinId"]
-                ?: return call.respond(HttpStatusCode.BadRequest, "Missing or malformed coinId")
-        val currencyParam =
-            call.parameters["currency"]
-                ?: return call.respond(HttpStatusCode.BadRequest, "Missing or malformed currency")
-        val days =
-            call.parameters["days"]?.toIntOrNull()
-                ?: return call.respond(HttpStatusCode.BadRequest, "Missing or malformed days")
+        val coinId = call.parameters["coinId"]
+        val currencyParam = call.parameters["currency"]
+        val days = call.parameters["days"]?.toIntOrNull()
+
+        if (coinId == null || currencyParam == null || days == null) {
+            call.respond(HttpStatusCode.BadRequest, "Missing or malformed parameters")
+            return
+        }
 
         val chartData =
             runBlocking {
-                repository.fetchCoinChartData(
-                    coinId,
-                    Currency.fromCode(currencyParam),
-                    days,
-                )
+                repository.fetchCoinChartData(coinId, Currency.fromCode(currencyParam), days)
             }
         if (chartData != null) {
             call.respond(chartData)
