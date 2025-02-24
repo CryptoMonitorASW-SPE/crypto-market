@@ -10,7 +10,6 @@ import it.unibo.domain.EventPayload
  * to release any underlying resources.
  */
 interface EventDispatcher {
-
     /**
      * Publishes the given event payload.
      *
@@ -21,7 +20,7 @@ interface EventDispatcher {
     /**
      * Closes the event dispatcher, releasing any resources held.
      *
-     * This should be called when the dispatcher is no longer needed 
+     * This should be called when the dispatcher is no longer needed
      * to prevent resource leaks.
      */
     fun close()

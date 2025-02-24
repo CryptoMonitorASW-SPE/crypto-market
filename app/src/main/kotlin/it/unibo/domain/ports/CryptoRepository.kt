@@ -12,7 +12,6 @@ import it.unibo.domain.Currency
  * and to terminate any underlying API client.
  */
 interface CryptoRepository {
-
     /**
      * Fetches coin market data based on the specified currency.
      *
