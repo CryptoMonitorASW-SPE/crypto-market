@@ -47,7 +47,7 @@ dependencies {
     implementation(libs.logback.classic)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
-    implementation("io.github.cdimascio:dotenv-kotlin:6.5.0")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
     implementation(libs.ktor.server.core.jvm)
     implementation(libs.ktor.server.netty.jvm)
     implementation(libs.ktor.server.content.negotiation.jvm)
