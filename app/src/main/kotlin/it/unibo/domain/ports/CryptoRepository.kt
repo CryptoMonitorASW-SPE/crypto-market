@@ -1,8 +1,8 @@
 package it.unibo.domain.ports
 
-import CryptoDetails
 import it.unibo.domain.Crypto
 import it.unibo.domain.CryptoChartData
+import it.unibo.domain.CryptoDetails
 import it.unibo.domain.Currency
 
 /**

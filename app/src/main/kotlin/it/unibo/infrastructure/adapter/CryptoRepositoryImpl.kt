@@ -2,7 +2,6 @@
 
 package it.unibo.infrastructure.adapter
 
-import CryptoDetails
 import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.DotenvException
 import io.ktor.client.*
@@ -15,6 +14,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import it.unibo.domain.Crypto
 import it.unibo.domain.CryptoChartData
+import it.unibo.domain.CryptoDetails
 import it.unibo.domain.CryptoSerializable
 import it.unibo.domain.Currency
 import it.unibo.domain.DataPoint
