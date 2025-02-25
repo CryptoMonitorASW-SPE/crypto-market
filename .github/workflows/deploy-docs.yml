@@ -44,17 +44,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Create and Checkout dokkaDoc Branch
+        run: |
+          git fetch origin dokkaDoc:dokkaDoc || true
+          git checkout dokkaDoc || git checkout -b dokkaDoc
+
       - name: Download Documentation Artifact
         uses: actions/download-artifact@v4
         with:
           name: docs
           path: docs
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Import GPG Key
         uses: crazy-max/ghaction-import-gpg@v6
@@ -64,13 +63,6 @@ jobs:
           git_user_signingkey: true
           git_commit_gpgsign: true
 
-      - name: Clean docs directory
-        run: rm -rf docs/*
-
-      - name: Create and Checkout dokkaDoc Branch
-        run: |
-          git fetch origin dokkaDoc:dokkaDoc || true
-          git checkout dokkaDoc || git checkout -b dokkaDoc
 
       - name: Commit and Push Documentation
         run: |
