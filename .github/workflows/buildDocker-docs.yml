@@ -40,7 +40,7 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ env.LOWERCASE_REPOSITORY }}:latest
-            ghcr.io/${{ env.LOWERCASE_REPOSITORY }}:${{ github.event.release.tag_name }}
+            ${{ github.event.release.tag_name && format('ghcr.io/{0}:{1}', env.LOWERCASE_REPOSITORY, github.event.release.tag_name) }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
@@ -87,12 +87,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Delete remote dokkaDoc branch if it exists and create a new one
-      - name: Recreate dokkaDoc Branch
+      - name: Checkout dokkaDoc Branch and clean
         run: |
           git fetch origin dokkaDoc || true
-          git push origin --delete dokkaDoc || true
-          git checkout -B dokkaDoc
+          if git show-ref --verify --quiet refs/remotes/origin/dokkaDoc; then
+              git checkout dokkaDoc || git checkout -B dokkaDoc
+          else
+              git checkout -B dokkaDoc
+          fi
+          rm -rf docs
 
       - name: Download Documentation Artifact
         uses: actions/download-artifact@v4
