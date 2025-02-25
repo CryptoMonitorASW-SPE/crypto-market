@@ -1,12 +1,6 @@
 name: Automating Testing
 
 on:
-  push:
-    branches:
-      - develop
-    paths-ignore:
-      - '**/renovate/**'
-
   pull_request:
     types: [opened, synchronize, reopened]
 

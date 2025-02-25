@@ -1,0 +1,117 @@
+name: Release Workflow
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout the Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Login to GitHub Container Registry
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. Set Up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 4. Convert repository name to lowercase and set as environment variable
+      - name: Convert repository name to lowercase
+        run: echo "LOWERCASE_REPOSITORY=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Echo Repository Lowercase
+        run: echo ${{ env.LOWERCASE_REPOSITORY }}
+
+      # 5. Build and Push Docker Image
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ env.LOWERCASE_REPOSITORY }}:latest
+            ghcr.io/${{ env.LOWERCASE_REPOSITORY }}:${{ github.event.release.tag_name }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+
+      # 6. Verify Docker Image
+      - name: Verify Docker Image
+        run: docker pull ghcr.io/${{ env.LOWERCASE_REPOSITORY }}:latest
+
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Generate Dokka HTML Documentation
+        run: ./gradlew dokkaHtml
+
+      - name: Move Documentation to Docs Folder
+        run: |
+          mkdir -p docs
+          rm -rf docs/*  # Clean previous docs
+          cp -r app/build/dokka/html/* docs/
+
+      - name: Upload Documentation Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs
+          path: docs
+
+  deploy-docs:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Delete remote dokkaDoc branch if it exists and create a new one
+      - name: Recreate dokkaDoc Branch
+        run: |
+          git fetch origin dokkaDoc || true
+          git push origin --delete dokkaDoc || true
+          git checkout -B dokkaDoc
+
+      - name: Download Documentation Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docs
+          path: docs
+
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.BOT_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.BOT_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Commit and Push Documentation
+        run: |
+          git add docs
+          git commit -m "docs: Update Dokka documentation"
+          git push origin dokkaDoc
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
