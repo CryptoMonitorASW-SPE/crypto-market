@@ -59,7 +59,7 @@ jobs:
 
       - name: Run Detekt
         id: detekt
-        run: ./gradlew detekt || true
+        run: ./gradlew detekt
 
       - name: Check if Detekt report is empty
         id: check_detekt_report
