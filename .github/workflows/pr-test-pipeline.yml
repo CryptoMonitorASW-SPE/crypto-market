@@ -1,11 +1,37 @@
-name: Code Quality on PR
+name: CI Pipeline
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  lint:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+           path: |
+             ~/.gradle/caches
+             ~/.gradle/wrapper
+           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+           restore-keys: |
+             ${{ runner.os }}-gradle-
+
+      - name: Run tests
+        run: ./gradlew test
+
+  code-quality:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -30,7 +56,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-
 
       - name: Run Detekt
         id: detekt
