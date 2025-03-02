@@ -21,8 +21,8 @@ import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
 class EventDispatcherAdapter(
-    private val httpServerHost: String = "event-dispatcher",
-    private val httpServerPort: Int = 3000,
+    private val httpServerHost: String = System.getenv("EVENT_DISPATCHER_SERVICE_NAME") ?: "event-dispatcher",
+    private val httpServerPort: Int = System.getenv("EVENT_DISPATCHER_SERVICE_PORT")?.toIntOrNull() ?: 3000,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
 ) : EventDispatcher {
     private val logger = LoggerFactory.getLogger(EventDispatcherAdapter::class.java)
