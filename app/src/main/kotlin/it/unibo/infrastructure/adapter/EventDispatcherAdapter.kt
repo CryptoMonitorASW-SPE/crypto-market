@@ -20,18 +20,15 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
-
-
 class EventDispatcherAdapter(
     private val httpServerHost: String = System.getenv("EVENT_DISPATCHER_SERVICE_NAME") ?: "event-dispatcher",
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
-    ) : EventDispatcher {
-
+) : EventDispatcher {
     companion object {
         private const val DEFAULT_PORT = 3000
     }
 
-    private val httpServerPort: Int = System.getenv("EVENT_DISPATCHER_SERVICE_PORT")?.toIntOrNull()?: DEFAULT_PORT
+    private val httpServerPort: Int = System.getenv("EVENT_DISPATCHER_SERVICE_PORT")?.toIntOrNull() ?: DEFAULT_PORT
     private val logger = LoggerFactory.getLogger(EventDispatcherAdapter::class.java)
     private val client = HttpClient(CIO)
     private val mutex = Mutex()
