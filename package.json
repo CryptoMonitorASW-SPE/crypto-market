@@ -5,7 +5,7 @@
     "globals": "^16.0.0",
     "husky": "^9.1.7",
     "semantic-release": "^24.2.1",
-    "semantic-release-preconfigured-conventional-commits": "1.1.123"
+    "semantic-release-preconfigured-conventional-commits": "1.1.125"
   },
   "overrides": {
     "conventional-changelog-conventionalcommits": ">= 8.0.0"
