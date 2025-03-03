@@ -209,7 +209,4 @@ It is integrated into the commit process using Husky, meaning you cannot commit 
 [Commitlint](https://commitlint.js.org/) is configured to enforce commit message conventions.\
 It ensures that all commits follow a standardized format, improving readability and maintainability.
 
-License
--------
-
-This project is licensed under the MIT License.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
