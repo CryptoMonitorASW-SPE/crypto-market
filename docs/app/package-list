@@ -156,8 +156,9 @@ $dokka.location:it.unibo.infrastructure.adapter/CryptoRepositoryImpl/fetchCoinCh
 $dokka.location:it.unibo.infrastructure.adapter/CryptoRepositoryImpl/fetchCoinDetails/#kotlin.String/PointingToDeclaration/app/it.unibo.infrastructure.adapter/-crypto-repository-impl/fetch-coin-details.html
 $dokka.location:it.unibo.infrastructure.adapter/CryptoRepositoryImpl/fetchCoinMarkets/#it.unibo.domain.Currency/PointingToDeclaration/app/it.unibo.infrastructure.adapter/-crypto-repository-impl/fetch-coin-markets.html
 $dokka.location:it.unibo.infrastructure.adapter/CryptoRepositoryImpl/killClient/#/PointingToDeclaration/app/it.unibo.infrastructure.adapter/-crypto-repository-impl/kill-client.html
+$dokka.location:it.unibo.infrastructure.adapter/EventDispatcherAdapter.Companion///PointingToDeclaration/app/it.unibo.infrastructure.adapter/-event-dispatcher-adapter/-companion/index.html
 $dokka.location:it.unibo.infrastructure.adapter/EventDispatcherAdapter///PointingToDeclaration/app/it.unibo.infrastructure.adapter/-event-dispatcher-adapter/index.html
-$dokka.location:it.unibo.infrastructure.adapter/EventDispatcherAdapter/EventDispatcherAdapter/#kotlin.String#kotlin.Int#kotlinx.coroutines.CoroutineScope/PointingToDeclaration/app/it.unibo.infrastructure.adapter/-event-dispatcher-adapter/-event-dispatcher-adapter.html
+$dokka.location:it.unibo.infrastructure.adapter/EventDispatcherAdapter/EventDispatcherAdapter/#kotlin.String#kotlinx.coroutines.CoroutineScope/PointingToDeclaration/app/it.unibo.infrastructure.adapter/-event-dispatcher-adapter/-event-dispatcher-adapter.html
 $dokka.location:it.unibo.infrastructure.adapter/EventDispatcherAdapter/close/#/PointingToDeclaration/app/it.unibo.infrastructure.adapter/-event-dispatcher-adapter/close.html
 $dokka.location:it.unibo.infrastructure.adapter/EventDispatcherAdapter/publish/#it.unibo.domain.EventPayload/PointingToDeclaration/app/it.unibo.infrastructure.adapter/-event-dispatcher-adapter/publish.html
 $dokka.location:it.unibo.infrastructure.adapter/WebServer.Companion///PointingToDeclaration/app/it.unibo.infrastructure.adapter/-web-server/-companion/index.html

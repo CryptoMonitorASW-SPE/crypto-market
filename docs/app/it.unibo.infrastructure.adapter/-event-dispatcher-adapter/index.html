@@ -46,7 +46,7 @@
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
         <div class="library-version" id="library-version">
-0.4.3-dev05+56dafc4        </div>
+0.4.4        </div>
         <div class="navigation-controls">
         <div class="filter-section filter-section_loading" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active=""
@@ -108,24 +108,43 @@
   <div class="breadcrumbs"><a href="../../../index.html">app</a><span class="delimiter">/</span><a href="../index.html">it.unibo.infrastructure.adapter</a><span class="delimiter">/</span><span class="current">EventDispatcherAdapter</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Event</span><wbr></wbr><span>Dispatcher</span><wbr></wbr><span><span>Adapter</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">EventDispatcherAdapter</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">httpServerHost<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">&quot;event-dispatcher&quot;</span><span class="token punctuation">, </span></span><span class="parameter ">httpServerPort<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">3000</span><span class="token punctuation">, </span></span><span class="parameter ">scope<span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines/CoroutineScope///PointingToDeclaration/">CoroutineScope</span><span class="token operator"> = </span>CoroutineScope(Dispatchers.IO)</span></span><span class="token punctuation">)</span> : <a href="../../it.unibo.domain.ports/-event-dispatcher/index.html">EventDispatcher</a></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">EventDispatcherAdapter</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">httpServerHost<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span>System.getenv(&quot;EVENT_DISPATCHER_SERVICE_NAME&quot;) ?: &quot;event-dispatcher&quot;<span class="token punctuation">, </span></span><span class="parameter ">scope<span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines/CoroutineScope///PointingToDeclaration/">CoroutineScope</span><span class="token operator"> = </span>CoroutineScope(Dispatchers.IO)</span></span><span class="token punctuation">)</span> : <a href="../../it.unibo.domain.ports/-event-dispatcher/index.html">EventDispatcher</a></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="CONSTRUCTOR">
         <h2 class="">Constructors</h2>
-        <div class="table"><a data-name="-959638327%2FConstructors%2F-1895570378" anchor-label="EventDispatcherAdapter" id="-959638327%2FConstructors%2F-1895570378" data-filterable-set=":app:dokkaHtml/main"></a>
+        <div class="table"><a data-name="199394186%2FConstructors%2F-1895570378" anchor-label="EventDispatcherAdapter" id="199394186%2FConstructors%2F-1895570378" data-filterable-set=":app:dokkaHtml/main"></a>
           <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":app:dokkaHtml/main" data-filterable-set=":app:dokkaHtml/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-event-dispatcher-adapter.html"><span>Event</span><wbr></wbr><span>Dispatcher</span><wbr></wbr><span><span>Adapter</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-959638327%2FConstructors%2F-1895570378"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="199394186%2FConstructors%2F-1895570378"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">httpServerHost<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">&quot;event-dispatcher&quot;</span><span class="token punctuation">, </span></span><span class="parameter ">httpServerPort<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">3000</span><span class="token punctuation">, </span></span><span class="parameter ">scope<span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines/CoroutineScope///PointingToDeclaration/">CoroutineScope</span><span class="token operator"> = </span>CoroutineScope(Dispatchers.IO)</span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">httpServerHost<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span>System.getenv(&quot;EVENT_DISPATCHER_SERVICE_NAME&quot;) ?: &quot;event-dispatcher&quot;<span class="token punctuation">, </span></span><span class="parameter ">scope<span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines/CoroutineScope///PointingToDeclaration/">CoroutineScope</span><span class="token operator"> = </span>CoroutineScope(Dispatchers.IO)</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-1170721842%2FClasslikes%2F-1895570378" anchor-label="Companion" id="-1170721842%2FClasslikes%2F-1895570378" data-filterable-set=":app:dokkaHtml/main"></a>
+          <div class="table-row" data-filterable-current=":app:dokkaHtml/main" data-filterable-set=":app:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1170721842%2FClasslikes%2F-1895570378"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
                 </div>
               </div>
             </div>
