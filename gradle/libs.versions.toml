@@ -1,6 +1,6 @@
 [versions]
 gitSensitiveSemanticVersioning = "4.0.2"
-kotlinSerialization = "1.9.25"
+kotlinSerialization = "2.1.20"
 junit-jupiter-engine = "5.11.4"
 ktlint = "12.1.2"
 detekt = "1.23.8"
