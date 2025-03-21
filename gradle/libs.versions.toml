@@ -2,7 +2,7 @@
 gitSensitiveSemanticVersioning = "4.0.2"
 kotlinSerialization = "1.9.25"
 junit-jupiter-engine = "5.11.4"
-ktlint = "12.1.2"
+ktlint = "12.2.0"
 detekt = "1.23.8"
 ktor = "3.1.1"
 logback = "1.5.16"
