@@ -1,4 +1,4 @@
-FROM gradle:8.12-jdk21 AS build
+FROM gradle:8.13-jdk21 AS build
 
 COPY app/build.gradle.kts settings.gradle.kts gradle.properties ./
 RUN mkdir -p gradle
